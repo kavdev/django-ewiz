@@ -45,9 +45,11 @@ In the ``DATABASES`` settings dictionary, simply use *django_ewiz* as the ENGINE
         'PORT': '',  # Either 80 or 443 (HTTP or HTTPS requests only)
     },
 
-That's it! All database operations performed will be abstracted and should function as the usual engines do (unless what you wish to do conflicts with the options below)
+That's it! All database operations performed will be abstracted and should function as the usual engines do (unless what you wish to do conflicts with the options below).
 
-The following query operations are supported:
+
+*The following query operations are supported:*
+
 * exact
 * iexact
 * contains
@@ -70,7 +72,7 @@ Related Fields
 --------------
 
 EnterpriseWizard supports foreign table relationships in it's REST API. To mark a field as related, simply add ``help_text=':'`` as a model field option.
-    requestor_username = CharField(help_text=':', db_column='submitter_username')
+    ``requestor_username = CharField(help_text=':', db_column='submitter_username')``
 
 Surprisingly many fields are related fields. If a DatabaseError is raised and you aren't sure why, try making the field related.
 
@@ -81,9 +83,10 @@ File Uploads
 django-ewiz does support file uploads - just not in a direct manner (binary uploads to the file field won't work [more research on abstracting that will be done later])
 
 To mark a field as a file field, add ``help_text='file'`` as a model field option. Since trying to modify the field directly won't work, adding ``editable=False`` is recommended to avoid confusion.
-    file_field = CharField(help_text='file', editable=False, db_column='attached_files')
+    ``file_field = CharField(help_text='file', editable=False, db_column='attached_files')``
 
 To upload a file, use the provided EwizAttacher class (``from django_ewiz import EwizAttacher``) with the following parameters:
+
 * `settingsDict` - the DATABASES dictionary that contains ewiz connection settings. e.g. settings.DATABASES['default']
 * `model` - the model instance  to which a file should be uploaded (the model must include one and only one file field). e.g. models.AccountRequest.objects.get(ticket_id = 1)
 * `file_reference` - a Python file object. If the file is coming from a django form, grab it via request.FILES['form_field_name'].file
