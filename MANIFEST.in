@@ -1,6 +1,6 @@
+include README.rst
 include CHANGES.txt
 include COPYING
 include COPYING.LESSER
 include LICENSE.txt
-include README.rst
 recursive-include django_ewiz/djangotoolbox *.py
