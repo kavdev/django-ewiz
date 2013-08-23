@@ -122,7 +122,7 @@ class EwizDecompiler(object):
             return count, response_list
 
         for ticket_id in idList:
-            response_url = Read(self.settingsDict, self.model._meta.db_table, ticket_id).build()
+            response_url = Read(self.settings_dict, self.model._meta.db_table, ticket_id).build()
             response_list.append(self.__request_single(response_url))
 
         return count, response_list
