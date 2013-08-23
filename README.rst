@@ -72,7 +72,10 @@ Related Fields
 --------------
 
 EnterpriseWizard supports foreign table relationships in it's REST API. To mark a field as related, simply add ``help_text=':'`` as a model field option.
-    ``requestor_username = CharField(help_text=':', db_column='submitter_username')``
+
+.. code:: python
+
+    requestor_username = CharField(help_text=':', db_column='submitter_username')
 
 Surprisingly many fields are related fields. If a DatabaseError is raised and you aren't sure why, try making the field related.
 
@@ -83,7 +86,10 @@ File Uploads
 django-ewiz does support file uploads - just not in a direct manner (binary uploads to the file field won't work [more research on abstracting that will be done later])
 
 To mark a field as a file field, add ``help_text='file'`` as a model field option. Since trying to modify the field directly won't work, adding ``editable=False`` is recommended to avoid confusion.
-    ``file_field = CharField(help_text='file', editable=False, db_column='attached_files')``
+
+.. code:: python
+
+    file_field = CharField(help_text='file', editable=False, db_column='attached_files')
 
 To upload a file, use the provided EwizAttacher class (``from django_ewiz import EwizAttacher``) with the following parameters:
 
