@@ -30,7 +30,7 @@ from django.db.models.sql.constants import SINGLE, MULTI
 from django.db.models.sql import aggregates as sqlaggregates
 from django.utils.datastructures import SortedDict
 
-from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
+from .djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
 
 from .decompiler import EwizDecompiler
 from .urlbuilders import Select, Update, Insert
