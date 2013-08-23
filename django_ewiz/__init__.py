@@ -19,7 +19,7 @@ along with django-ewiz. If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from attacher import EwizAttacher
+from .attacher import EwizAttacher
 
 #
 # Version Classification

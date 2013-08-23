@@ -27,7 +27,7 @@ from functools import wraps
 
 from django.db.utils import DatabaseError
 
-from urlbuilders import Read
+from .urlbuilders import Read
 
 
 def safe_call(func):
