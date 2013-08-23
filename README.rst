@@ -10,8 +10,6 @@ A non-relational Django database backend that utilizes EnterpriseWizard's REST i
 :Author:            Alex Kavanaugh <kavanaugh.development@outlook.com>
 :License:           GNU LGPL (http://www.gnu.org/licenses/lgpl.html)
 
-..
-.. contents::x
 
 Installation
 ============
@@ -20,7 +18,7 @@ Run ``pip install django-ewiz``
 
 Add *django_ewiz* to ``INSTALLED_APPS``
 
-.. code-block:: python
+.. code:: python
     INSTALLED_APPS = (
         ...
         'django_ewiz',
@@ -35,7 +33,7 @@ Basic Usage
 
 In the ``DATABASES`` settings dictionary, simply use *django_ewiz* as the ENGINE key.
 
-.. code-block:: python
+.. code:: python
     'default': {
         'ENGINE': 'django_ewiz',
         'NAME': '',  # The name of the knowlegebase
@@ -95,7 +93,7 @@ File Upload Example
 
 
 `forms.py`
-.. code-block:: python
+.. code:: python
     import os
     
     from django.forms import Form, FileField
@@ -105,7 +103,7 @@ File Upload Example
 
 
 `models.py`
-.. code-block:: python
+.. code:: python
     from django.db.models import Model, AutoField, CharField
     
     class AccountRequest(Model):
@@ -121,7 +119,7 @@ File Upload Example
             verbose_name = u'Account Request'
 
 `views.py`
-.. code-block:: python
+.. code:: python
     from django.conf import settings
     from django.views.generic.edit import FormView
     
