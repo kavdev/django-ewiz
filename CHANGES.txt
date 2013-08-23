@@ -2,3 +2,7 @@ v1.0.0, 3/1/13 -- Initial release.
 v1.0.1, 4/1/13 --Added connection error handling.
 v1.1.1, 4/15/13 -- Added file attachment capability.
 v1.1.2, 8/20/13 -- Released as a python package.
+v1.1.3, 8/20/13 -- Fixed setup file.
+v1.1.4, 8/20/13 -- Fixed setup file, again...
+v1.1.5, 8/21/13 -- Fixed setup file, once more.
+v1.1.6, 8/23/13 -- Made djangotoolbox dependency local.

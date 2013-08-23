@@ -2,13 +2,16 @@ from distutils.core import setup
 
 setup(
     name='django-ewiz',
-    version='1.1.2',
+    version='1.1.6',
+    author='Alex Kavanaugh',
+    author_email='kavanaugh.development@outlook.com',
     packages=['django_ewiz'],
-    license=open('LICENSE.txt').read(),
+    url='http://pypi.python.org/pypi/django-ewiz/',
+    license='GNU LGPL',
     description="A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.",
     long_description=open('README.txt').read(),
+    dependency_links = ['https://github.com/django-nonrel/djangotoolbox.git@toolbox-1.4#egg=djangotoolbox'],
     install_requires=[
         "Django>=1.5.2",
-        "djangotoolbox==0.9.2"
     ],
 )
