@@ -19,13 +19,13 @@ Installation
 Run ``pip install django-ewiz``
 
 Add *django_ewiz* to ``INSTALLED_APPS``
-.. code:: python
 
-INSTALLED_APPS = (
-    ...
-    'django_ewiz',
-    ...
-)
+.. code-block:: python
+    INSTALLED_APPS = (
+        ...
+        'django_ewiz',
+        ...
+    )
 
 Usage
 ============
@@ -34,16 +34,16 @@ Basic Usage
 -----------
 
 In the ``DATABASES`` settings dictionary, simply use *django_ewiz* as the ENGINE key.
-.. code:: python
 
-'default': {
-    'ENGINE': 'django_ewiz',
-    'NAME': '',  # The name of the knowlegebase
-    'USER': '',  # The name of the user
-    'PASSWORD': '',  # The user's password
-    'HOST': 'calpoly.enterprisewizard.com/ewws/',  # EnterpriseWizard's REST base url, generally 'example.com/ewws/'
-    'PORT': '443',  # Either 80 or 443 (HTTP or HTTPS requests only)
-},
+.. code-block:: python
+    'default': {
+        'ENGINE': 'django_ewiz',
+        'NAME': '',  # The name of the knowlegebase
+        'USER': '',  # The name of the user
+        'PASSWORD': '',  # The user's password
+        'HOST': 'calpoly.enterprisewizard.com/ewws/',  # EnterpriseWizard's REST base url, generally 'example.com/ewws/'
+        'PORT': '443',  # Either 80 or 443 (HTTP or HTTPS requests only)
+    },
 
 That's it! All database operations performed will be abstracted and should function as the usual engines do (unless what you wish to do conflicts with the options below)
 
@@ -95,55 +95,52 @@ File Upload Example
 
 
 `forms.py`
-.. code:: python
-
-import os
-
-from django.forms import Form, FileField
-
-class EwizUploadForm(Form):
-    uploaded_file = FileField(required=True)
+.. code-block:: python
+    import os
+    
+    from django.forms import Form, FileField
+    
+    class EwizUploadForm(Form):
+        uploaded_file = FileField(required=True)
 
 
 `models.py`
-.. code:: python
-
-from django.db.models import Model, AutoField, CharField
-
-class AccountRequest(Model):
-    ticket_id = AutoField(primary_key=True, db_column='id')
-    subject_username = CharField(help_text=':')
+.. code-block:: python
+    from django.db.models import Model, AutoField, CharField
     
-    # Use this field only in conjunction with EwizAttacher - do not attempt to directly populate it
-    file_field = CharField(help_text='file', editable=False, db_column='attached_files')
-    
-    class Meta:
-        db_table = u'account_request'
-        managed = False
-        verbose_name = u'Account Request'
+    class AccountRequest(Model):
+        ticket_id = AutoField(primary_key=True, db_column='id')
+        subject_username = CharField(help_text=':')
+        
+        # Use this field only in conjunction with EwizAttacher - do not attempt to directly populate it
+        file_field = CharField(help_text='file', editable=False, db_column='attached_files')
+        
+        class Meta:
+            db_table = u'account_request'
+            managed = False
+            verbose_name = u'Account Request'
 
 `views.py`
-.. code:: python
-
-from django.conf import settings
-from django.views.generic.edit import FormView
-
-from django_ewiz import EwizAttacher
-
-from .forms import EwizUploadForm
-from .models import AccountRequest
-
-class UploadDemoView(FormView):
-    template_name = "ewizdemo.html"
-    form_class = EwizUploadForm
-
-    def form_valid(self, form):
-        # Create a new account request
-        ticket = AccountRequest(subject_username=self.request.user.username)
-        ticket.save()
-
-        # Grab the file
-        file_reference = self.request.FILES['uploaded_file'].file
-
-        # Upload the file
-        EwizAttacher(settings_dict=settings.DATABASES['default'], model=ticket, file_reference=file_reference, file_name=self.request.user.get_username + u'.pdf').attachFile()
+.. code-block:: python
+    from django.conf import settings
+    from django.views.generic.edit import FormView
+    
+    from django_ewiz import EwizAttacher
+    
+    from .forms import EwizUploadForm
+    from .models import AccountRequest
+    
+    class UploadDemoView(FormView):
+        template_name = "ewizdemo.html"
+        form_class = EwizUploadForm
+    
+        def form_valid(self, form):
+            # Create a new account request
+            ticket = AccountRequest(subject_username=self.request.user.username)
+            ticket.save()
+    
+            # Grab the file
+            file_reference = self.request.FILES['uploaded_file'].file
+    
+            # Upload the file
+            EwizAttacher(settings_dict=settings.DATABASES['default'], model=ticket, file_reference=file_reference, file_name=self.request.user.get_username + u'.pdf').attachFile()
