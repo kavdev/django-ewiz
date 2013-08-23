@@ -19,7 +19,7 @@ Installation
 Run ``pip install django-ewiz``
 
 Add *django_ewiz* to ``INSTALLED_APPS``
-
+    .. code:: python
     INSTALLED_APPS = (
         ...
         'django_ewiz',
@@ -33,7 +33,7 @@ Basic Usage
 -----------
 
 In the ``DATABASES`` settings dictionary, simply use *django_ewiz* as the ENGINE key.
-
+    .. code:: python
     'default': {
         'ENGINE': 'django_ewiz',
         'NAME': '',  # The name of the knowlegebase
@@ -93,6 +93,7 @@ File Upload Example
 
 
 `forms.py`
+    .. code:: python
     import os
     
     from django.forms import Form, FileField
@@ -102,6 +103,7 @@ File Upload Example
 
 
 `models.py`
+    .. code:: python
     from django.db.models import Model, AutoField, CharField
     
     class AccountRequest(Model):
@@ -117,6 +119,7 @@ File Upload Example
             verbose_name = u'Account Request'
 
 `views.py`
+    .. code:: python
     from django.conf import settings
     from django.views.generic.edit import FormView
     
