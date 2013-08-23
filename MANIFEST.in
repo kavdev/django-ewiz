@@ -1,0 +1,6 @@
+include CHANGES.txt
+include COPYING
+include COPYING.LESSER
+include LICENSE.txt
+include README.txt
+recursive-include django_ewiz/djangotoolbox *.py
