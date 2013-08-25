@@ -4,7 +4,7 @@ django-ewiz
 A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:Version:           1.1.17
+:Version:           1.1.18
 :Dependencies:      Python 2.7, Django 1.5.2+
 :Home page:         https://bitbucket.org/alex_kavanaugh/django-ewiz
 :Author:            Alex Kavanaugh <kavanaugh.development@outlook.com>
@@ -96,7 +96,7 @@ To upload a file, use the provided EwizAttacher class (``from django_ewiz import
 * `settingsDict` - the DATABASES dictionary that contains ewiz connection settings. e.g. settings.DATABASES['default']
 * `model` - the model instance  to which a file should be uploaded (the model must include one and only one file field). e.g. models.AccountRequest.objects.get(ticket_id = 1)
 * `file_reference` - a Python file object. If the file is coming from a django form, grab it via request.FILES['form_field_name'].file
-* `file_name` - the desired file name. If the file is coming from a django form, you can grab it's name via request.FILES['form_field_name'].name
+* `file_name` - the desired file name. If the file is coming from a django form, you can grab its name via request.FILES['form_field_name'].name
 
 
 File Upload Example
@@ -107,12 +107,10 @@ File Upload Example
 
 .. code:: python
 
- import os
- 
- from django.forms import Form, FileField
- 
- class EwizUploadForm(Form):
-     uploaded_file = FileField(required=True)
+    from django.forms import Form, FileField
+    
+    class EwizUploadForm(Form):
+        uploaded_file = FileField(required=True)
 
 
 `models.py`
