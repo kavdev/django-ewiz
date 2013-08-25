@@ -156,4 +156,4 @@ File Upload Example
             file_reference = self.request.FILES['uploaded_file'].file
     
             # Upload the file
-            EwizAttacher(settings_dict=settings.DATABASES['default'], model=ticket, file_reference=file_reference, file_name=self.request.user.get_username + u'.pdf').attachFile()
+            EwizAttacher(settings_dict=settings.DATABASES['default'], model=ticket, file_reference=file_reference, file_name=self.request.user.username + u'.pdf').attachFile()
