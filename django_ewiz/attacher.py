@@ -55,7 +55,7 @@ class EwizAttacher:
     def attach_file(self):
         """Sends the upload request to the ewiz server."""
 
-        self.buildURL()
+        self.build_url()
 
         request = urllib2.Request(self.url, self.file.read(), {'Content-Type': 'application/octet-stream'})
         request.get_method = lambda: 'PUT'
