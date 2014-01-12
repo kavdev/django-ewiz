@@ -4,4 +4,3 @@ include COPYING
 include COPYING.LESSER
 include LICENSE.txt
 include MANIFEST.in
-recursive-include django_ewiz/djangotoolbox *.py

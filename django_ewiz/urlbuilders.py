@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 """
 
 .. module:: django-ewiz.urlbuilders
@@ -35,7 +37,7 @@ def safe_call(func):
         try:
             return func(*args, **kwargs)
         except Exception, message:
-            raise DatabaseError(str(message) + str(sys.exc_info()[2]))
+            raise DatabaseError(unicode(str(message)) + unicode(str(sys.exc_info()[2])))
 
     return _func
 
@@ -51,21 +53,21 @@ class Read(object):
 
     def __init__(self, settings_dict, table, ticket_id):
         if settings_dict["PORT"] == "443":
-            self.protocol = u'https://'
+            self.protocol = 'https://'
         else:
-            self.protocol = u'http://'
+            self.protocol = 'http://'
 
         self.host = settings_dict["HOST"]
         self.knowledge_base = settings_dict["NAME"]
         self.login = settings_dict["USER"]
         self.password = settings_dict["PASSWORD"]
-        self.language = u'en'
+        self.language = 'en'
         self.table = table
         self.ticket_id = ticket_id
 
     @safe_call
     def build(self):
-        return urllib.quote(self.protocol + self.host + u'EWRead?$KB=' + self.knowledge_base + u'&$table=' + self.table + u'&$login=' + self.login + u'&$password=' + self.password + u'&$lang=' + self.language + u'&id=' + str(self.ticket_id), ":/?$&='")
+        return urllib.quote(self.protocol + self.host + 'EWRead?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id), ":/?$&='")
 
 
 class Select(object):
@@ -79,15 +81,15 @@ class Select(object):
 
     def __init__(self, settings_dict, table, compiled_query):
         if settings_dict["PORT"] == "443":
-            self.protocol = u'https://'
+            self.protocol = 'https://'
         else:
-            self.protocol = u'http://'
+            self.protocol = 'http://'
 
         self.host = settings_dict["HOST"]
         self.knowledge_base = settings_dict["NAME"]
         self.login = settings_dict["USER"]
         self.password = settings_dict["PASSWORD"]
-        self.language = u'en'
+        self.language = 'en'
         self.table = table
         self.compiled_query = compiled_query
 
@@ -96,28 +98,28 @@ class Select(object):
         return urllib.quote(self.__build_select() + self.__build_where(), ":/?$&='")
 
     def __build_select(self):
-        return self.protocol + self.host + u'EWSelect?$KB=' + self.knowledge_base + u'&$table=' + self.table + u'&$login=' + self.login + u'&$password=' + self.password + u'&$lang=' + self.language
+        return self.protocol + self.host + 'EWSelect?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language
 
     def __build_where(self):
         # Build filters string
-        filters = u''
+        filters = ''
         for query_filter in self.compiled_query["filters"][:-1]:
-            filters += query_filter + u' AND '
+            filters += query_filter + ' AND '
         else:
             filters += self.compiled_query["filters"][-1]
 
         # Build ordering string
-        ordering = u' ORDER BY '
+        ordering = ' ORDER BY '
         for order in self.compiled_query["ordering"][:-1]:
-            ordering += order + u', '
+            ordering += order + ', '
         else:
             ordering += self.compiled_query["ordering"][-1]
 
         # Build limits string
-        limit = u' LIMIT ' + self.compiled_query["limits"]["limit"]
-        offset = u' OFFSET ' + self.compiled_query["limits"]["offset"]
+        limit = ' LIMIT ' + self.compiled_query["limits"]["limit"]
+        offset = ' OFFSET ' + self.compiled_query["limits"]["offset"]
 
-        return u'&where=' + filters + ordering + limit + offset
+        return '&where=' + filters + ordering + limit + offset
 
 
 class Insert(object):
@@ -132,33 +134,33 @@ class Insert(object):
 
     def __init__(self, settings_dict, table, data):
         if settings_dict["PORT"] == "443":
-            self.protocol = u'https://'
+            self.protocol = 'https://'
         else:
-            self.protocol = u'http://'
+            self.protocol = 'http://'
 
         self.host = settings_dict["HOST"]
         self.knowledge_base = settings_dict["NAME"]
         self.login = settings_dict["USER"]
         self.password = settings_dict["PASSWORD"]
-        self.language = u'en'
+        self.language = 'en'
         self.table = table
         self.data = data
 
     @safe_call
     def build(self):
-        return urllib.quote(self.__build_insert() + self.__build_data() + u'&time_spent=0:0:1:0', ":/?$&='")
+        return urllib.quote(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
 
     @safe_call
     def __build_insert(self):
-        return self.protocol + self.host + u'EWCreate?$KB=' + self.knowledge_base + u'&$table=' + self.table + u'&$login=' + self.login + u'&$password=' + self.password + u'&$lang=' + self.language
+        return self.protocol + self.host + 'EWCreate?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language
 
     @safe_call
     def __build_data(self):
-        data_string = u''
+        data_string = ''
         for field, value in self.data:
             # Only insert if the field is editable and the field has a value or is allowed to be blank
             if (value or field.blank):  # field.editable and
-                data_string += u'&' + field.column + u'=' + field.help_text + unicode(str(value))
+                data_string += '&' + field.column + '=' + field.help_text + unicode(str(value))
 
         return data_string
 
@@ -175,34 +177,34 @@ class Update(object):
 
     def __init__(self, settings_dict, table, ticket_id, data):
         if settings_dict["PORT"] == "443":
-            self.protocol = u'https://'
+            self.protocol = 'https://'
         else:
-            self.protocol = u'http://'
+            self.protocol = 'http://'
 
         self.host = settings_dict["HOST"]
         self.knowledge_base = settings_dict["NAME"]
         self.login = settings_dict["USER"]
         self.password = settings_dict["PASSWORD"]
-        self.language = u'en'
+        self.language = 'en'
         self.table = table
         self.ticket_id = unicode(str(ticket_id))
         self.data = data
 
     @safe_call
     def build(self):
-        return urllib.quote(self.__build_update() + self.__build_data() + u'&time_spent=0:0:1:0', ":/?$&='")
+        return urllib.quote(self.__build_update() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
 
     @safe_call
     def __build_update(self):
-        return self.protocol + self.host + u'EWUpdate?$KB=' + self.knowledge_base + u'&$table=' + self.table + u'&$login=' + self.login + u'&$password=' + self.password + u'&$lang=' + self.language
+        return self.protocol + self.host + 'EWUpdate?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language
 
     @safe_call
     def __build_data(self):
-        data_string = u'&id=' + self.ticket_id
+        data_string = '&id=' + self.ticket_id
         for field, value in self.data:
             # Only update if the field is editable and the field has a value or is allowed to be blank
             if field.editable and (value or field.blank):
-                data_string += u'&' + field.column + u'=' + field.help_text + unicode(str(value))
+                data_string += '&' + field.column + '=' + field.help_text + unicode(str(value))
 
         return data_string
 
@@ -218,15 +220,15 @@ class Attach(object):
 
     def __init__(self, settings_dict, table, ticket_id, field_name, file_name):
         if settings_dict["PORT"] == "443":
-            self.protocol = u'https://'
+            self.protocol = 'https://'
         else:
-            self.protocol = u'http://'
+            self.protocol = 'http://'
 
         self.host = settings_dict["HOST"]
         self.knowledge_base = settings_dict["NAME"]
         self.login = settings_dict["USER"]
         self.password = settings_dict["PASSWORD"]
-        self.language = u'en'
+        self.language = 'en'
         self.table = table
         self.ticket_id = ticket_id
         self.field_name = field_name
@@ -234,4 +236,4 @@ class Attach(object):
 
     @safe_call
     def build(self):
-        return urllib.quote(self.protocol + self.host + u'EWAttach?$KB=' + self.knowledge_base + u'&$table=' + self.table + u'&$login=' + self.login + u'&$password=' + self.password + u'&$lang=' + self.language + u'&id=' + str(self.ticket_id) + u'&field=' + str(self.field_name) + u'&fileName=' + str(self.file_name), ":/?$&='")
+        return urllib.quote(self.protocol + self.host + 'EWAttach?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id) + '&field=' + str(self.field_name) + '&fileName=' + str(self.file_name), ":/?$&='")

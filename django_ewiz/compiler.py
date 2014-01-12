@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 """
 
 .. module:: django-ewiz.compiler
@@ -22,7 +24,6 @@
 
 import sys
 import re
-import urllib2
 from functools import wraps
 
 from django.db.utils import DatabaseError, IntegrityError
@@ -30,7 +31,8 @@ from django.db.models.sql.constants import SINGLE, MULTI
 from django.db.models.sql import aggregates as sqlaggregates
 from django.utils.datastructures import SortedDict
 
-from .djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
+import requests
+from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
 
 from .decompiler import EwizDecompiler
 from .urlbuilders import Select, Update, Insert
@@ -44,7 +46,7 @@ def safe_call(func):
         try:
             return func(*args, **kwargs)
         except Exception, message:
-            raise DatabaseError(str(message) + str(sys.exc_info()[2]))
+            raise DatabaseError(unicode(str(message)) + unicode(str(sys.exc_info()[2])))
 
     return _func
 
@@ -60,44 +62,44 @@ class EwizQuery(NonrelQuery):
 
     # A dictionary of operators and their ewiz REST representations.
     operators = {
-        'exact': lambda lookup_type, value: (u"= BINARY", u"'" + unicode(str(value)) + u"'"),
-        'iexact': lambda lookup_type, value: (u"=", u"'" + unicode(str(value)) + u"'"),
-        'contains': lambda lookup_type, value: (u"LIKE BINARY", u"'%" + unicode(str(value)) + u"%'"),
-        'icontains': lambda lookup_type, value: (u"LIKE", u"'%" + unicode(str(value)) + u"%'"),
-        'gt': lambda lookup_type, value: (u">", u"'" + unicode(str(value)) + u"'"),
-        'gte': lambda lookup_type, value: (u">=", u"'" + unicode(str(value)) + u"'"),
-        'lt': lambda lookup_type, value: (u"<", u"'" + unicode(str(value)) + u"'"),
-        'lte': lambda lookup_type, value: (u"<=", u"'" + unicode(str(value)) + u"'"),
-        'in': lambda lookup_type, value: (u"IN", value),
-        'startswith': lambda lookup_type, value: (u"LIKE BINARY", u"'" + unicode(str(value)) + u"%'"),
-        'istartswith': lambda lookup_type, value: (u"LIKE", u"'" + unicode(str(value)) + u"%'"),
-        'endswith': lambda lookup_type, value: (u"LIKE BINARY", u"'%" + unicode(str(value)) + u"'"),
-        'iendswith': lambda lookup_type, value: (u"LIKE", u"'%" + unicode(str(value)) + u"'"),
-        'range': lambda lookup_type, value: (u"BETWEEN", unicode(str(value))),
-        'isnull': lambda lookup_type, value: (u"IS NULL", None),
-        'regex': lambda lookup_type, value: (u"REGEXP BINARY", u"'" + unicode(str(value)) + u"'"),
-        'iregex': lambda lookup_type, value: (u"REGEXP", u"'" + unicode(str(value)) + u"'"),
+        'exact': lambda lookup_type, value: ("= BINARY", "'" + unicode(str(value)) + "'"),
+        'iexact': lambda lookup_type, value: ("=", "'" + unicode(str(value)) + "'"),
+        'contains': lambda lookup_type, value: ("LIKE BINARY", "'%" + unicode(str(value)) + "%'"),
+        'icontains': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "%'"),
+        'gt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
+        'gte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
+        'lt': lambda lookup_type, value: ("<", "'" + unicode(str(value)) + "'"),
+        'lte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
+        'in': lambda lookup_type, value: ("IN", value),
+        'startswith': lambda lookup_type, value: ("LIKE BINARY", "'" + unicode(str(value)) + "%'"),
+        'istartswith': lambda lookup_type, value: ("LIKE", "'" + unicode(str(value)) + "%'"),
+        'endswith': lambda lookup_type, value: ("LIKE BINARY", "'%" + unicode(str(value)) + "'"),
+        'iendswith': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "'"),
+        'range': lambda lookup_type, value: ("BETWEEN", unicode(str(value))),
+        'isnull': lambda lookup_type, value: ("IS NULL", None),
+        'regex': lambda lookup_type, value: ("REGEXP BINARY", "'" + unicode(str(value)) + "'"),
+        'iregex': lambda lookup_type, value: ("REGEXP", "'" + unicode(str(value)) + "'"),
     }
 
     # A dictionary of operators and their negated ewiz REST representations.
     negated_operators = {
-        'exact': lambda lookup_type, value: (u"!= BINARY", u"'" + unicode(str(value)) + u"'"),
-        'iexact': lambda lookup_type, value: (u"!=", u"'" + unicode(str(value)) + u"'"),
-        'contains': lambda lookup_type, value: (u"NOT LIKE BINARY", u"'%" + unicode(str(value)) + u"%'"),
-        'icontains': lambda lookup_type, value: (u"NOT LIKE", u"'%" + unicode(str(value)) + u"%'"),
-        'gt': lambda lookup_type, value: (u"<", u"'" + unicode(str(value)) + u"'"),
-        'gte': lambda lookup_type, value: (u"<=", u"'" + unicode(str(value)) + u"'"),
-        'lt': lambda lookup_type, value: (u">", u"'" + unicode(str(value)) + u"'"),
-        'lte': lambda lookup_type, value: (u">=", u"'" + unicode(str(value)) + u"'"),
-        'in': lambda lookup_type, value: (u"NOT IN", value),
-        'startswith': lambda lookup_type, value: (u"NOT LIKE BINARY", u"'" + unicode(str(value)) + u"%'"),
-        'istartswith': lambda lookup_type, value: (u"NOT LIKE", u"'" + unicode(str(value)) + u"%'"),
-        'endswith': lambda lookup_type, value: (u"NOT LIKE BINARY", u"'%" + unicode(str(value)) + u"'"),
-        'iendswith': lambda lookup_type, value: (u"NOT LIKE", u"'%" + unicode(str(value)) + u"'"),
-        'range': lambda lookup_type, value: (u"NOT BETWEEN", unicode(str(value))),
-        'isnull': lambda lookup_type, value: (u"IS NOT NULL", None),
-        'regex': lambda lookup_type, value: (u"NOT REGEXP BINARY", u"'" + unicode(str(value)) + u"'"),
-        'iregex': lambda lookup_type, value: (u"NOT REGEXP", u"'" + unicode(str(value)) + u"'"),
+        'exact': lambda lookup_type, value: ("!= BINARY", "'" + unicode(str(value)) + "'"),
+        'iexact': lambda lookup_type, value: ("!=", "'" + unicode(str(value)) + "'"),
+        'contains': lambda lookup_type, value: ("NOT LIKE BINARY", "'%" + unicode(str(value)) + "%'"),
+        'icontains': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "%'"),
+        'gt': lambda lookup_type, value: ("<", "'" + unicode(str(value)) + "'"),
+        'gte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
+        'lt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
+        'lte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
+        'in': lambda lookup_type, value: ("NOT IN", value),
+        'startswith': lambda lookup_type, value: ("NOT LIKE BINARY", "'" + unicode(str(value)) + "%'"),
+        'istartswith': lambda lookup_type, value: ("NOT LIKE", "'" + unicode(str(value)) + "%'"),
+        'endswith': lambda lookup_type, value: ("NOT LIKE BINARY", "'%" + unicode(str(value)) + "'"),
+        'iendswith': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "'"),
+        'range': lambda lookup_type, value: ("NOT BETWEEN", unicode(str(value))),
+        'isnull': lambda lookup_type, value: ("IS NOT NULL", None),
+        'regex': lambda lookup_type, value: ("NOT REGEXP BINARY", "'" + unicode(str(value)) + "'"),
+        'iregex': lambda lookup_type, value: ("NOT REGEXP", "'" + unicode(str(value)) + "'"),
     }
 
     def __init__(self, compiler, fields):
@@ -107,16 +109,16 @@ class EwizQuery(NonrelQuery):
             'filters': [],
             'ordering': [],
             'limits': {
-                'offset': u'0',
-                'limit': u'18446744073709551615'  # Max limit as proposed by MySQL,
+                'offset': '0',
+                'limit': '18446744073709551615'  # Max limit as proposed by MySQL,
             },
         }
 
     def __debug(self):
-        return (u'DEBUG INFO:' +
-            u'\n\nRAW_QUERY: ' + str(self.query) +
-            u'\nCOMPILED_QUERY: ' + str(self.compiled_query) +
-            u'\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
+        return ('DEBUG INFO:' +
+            '\n\nRAW_QUERY: ' + str(self.query) +
+            '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
+            '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
         )
 
     @safe_call
@@ -135,12 +137,12 @@ class EwizQuery(NonrelQuery):
 
         # Handle all records requests
         if not self.compiled_query["filters"]:
-            self.compiled_query["filters"] = [u"id LIKE '%'"]
+            self.compiled_query["filters"] = ["id LIKE '%'"]
 
         if high_mark is None:
             # Infinite fetching
             self.compiled_query["limits"]["offset"] = unicode(str(low_mark))
-            self.compiled_query["limits"]["limit"] = u'18446744073709551615'  # Max limit as proposed by MySQL
+            self.compiled_query["limits"]["limit"] = '18446744073709551615'  # Max limit as proposed by MySQL
         elif high_mark > low_mark:
             # Range fetching
             self.compiled_query["limits"]["offset"] = unicode(str(low_mark))
@@ -185,7 +187,7 @@ class EwizQuery(NonrelQuery):
 
     @safe_call
     def delete(self):
-        raise NotImplementedError(u"Deleting EnterpriseWizard records is generally ill-advised. Please contact your EnterpriseWizard administrator for more information.")
+        raise NotImplementedError("Deleting EnterpriseWizard records is generally ill-advised. Please contact your EnterpriseWizard administrator for more information.")
 
     @safe_call
     def order_by(self, ordering):
@@ -205,22 +207,22 @@ class EwizQuery(NonrelQuery):
         # A True/False ordering designates default ordering.
         if type(ordering) is bool:
             if ordering:
-                self.compiled_query["ordering"].append(u'id ASC')
+                self.compiled_query["ordering"].append('id ASC')
             else:
-                raise DatabaseError(u"The 'ORDER BY' statement is not currently supported by the EnterpriseWizard REST interface.")
-                self.compiled_query["ordering"].append(u'id DESC')
+                raise DatabaseError("The 'ORDER BY' statement is not currently supported by the EnterpriseWizard REST interface.")
+                self.compiled_query["ordering"].append('id DESC')
         # A list of ordering tuples designates multiple ordering (non-default)
         else:
             for order in ordering:
                 field = order[0]
                 if order[1]:
-                    direction = u'ASC'
+                    direction = 'ASC'
                 else:
-                    direction = u'DESC'
+                    direction = 'DESC'
 
-                self.compiled_query["ordering"].append(field.name + u' ' + direction)
+                self.compiled_query["ordering"].append(field.name + ' ' + direction)
 
-            raise DatabaseError(u"The 'ORDER BY' statement is not currently supported by the EnterpriseWizard REST interface.")
+            raise DatabaseError("The 'ORDER BY' statement is not currently supported by the EnterpriseWizard REST interface.")
 
     @safe_call
     def add_filter(self, field, lookup_type, negated, value):
@@ -250,7 +252,7 @@ class EwizQuery(NonrelQuery):
         if callable(operator):
             operator, value = operator(lookup_type, value)
 
-        self.compiled_query["filters"].append(field.column + u' ' + operator + u' ' + value)
+        self.compiled_query["filters"].append(field.column + ' ' + operator + ' ' + value)
 
 
 class EwizCompiler(NonrelCompiler):
@@ -275,7 +277,7 @@ class EwizCompiler(NonrelCompiler):
         aggregates = self.query.aggregate_select.values()
 
         try:
-            saveCheck = self.query.extra["a"] == (u'1', [])
+            saveCheck = self.query.extra["a"] == ('1', [])
         except:
             pass
 
@@ -315,7 +317,7 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
 
     Ewiz Insert Compiler
 
-    Creates new tickets in the Ewiz database via the REST API.
+    Creates new tickets in the urllib2Ewiz database via the REST API.
 
     """
 
@@ -349,7 +351,7 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
             docs.append(doc)
 
         if len(docs) > 1:
-            raise DatabaseError(u'INSERT COMPILER: Docs length assumption was wrong. Contact Alex Kavanaugh with details./n/tDocs Length: ' + unicode(str(len(docs))))
+            raise DatabaseError('INSERT COMPILER: Docs length assumption was wrong. Contact Alex Kavanaugh with details./n/tDocs Length: ' + unicode(str(len(docs))))
 
         key = self.insert(docs[0], return_id=return_id)
         # Pass the key value through normal database deconversion.
@@ -363,22 +365,20 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
         url = Insert(self.connection.settings_dict, self.query.model._meta.db_table, values).build()
 
         # Attempt the Insert
-        request = urllib2.Request(url)
-
         try:
-            response = urllib2.urlopen(request)
+            response = requests.get(url)
 
             # Return the new ID
             if return_id:
                 pattern = re.compile(r"^EWREST_id='(?P<value>.*)';$", re.DOTALL)
 
-                idList = []
-                for line in iter(lambda: unicode(response.readline().decode('string-escape').strip(), 'ISO-8859-1'), ""):
-                    idList.append(pattern.match(line).group('value'))
-                return int(idList[0])
+                line = next(response.iter_lines(decode_unicode=True))
+                new_id = pattern.match(line).group('value')
 
-        except urllib2.HTTPError, message:
-            raise DatabaseError(self.query.model._meta.object_name + u' - An INSERT error has occurred. Please contact the development team with the following details:\n\t' + unicode(str(message)))
+                return int(new_id)
+
+        except requests.exceptions.HTTPError, message:
+            raise DatabaseError(self.query.model._meta.object_name + ' - An INSERT error has occurred. Please contact the development team with the following details:\n\t' + unicode(str(message)))
 
 
 class EwizUpdateCompiler(NonrelUpdateCompiler):
@@ -398,23 +398,21 @@ class EwizUpdateCompiler(NonrelUpdateCompiler):
         try:
             ticketID = self.query.where.children[0].children[0][-1]
         except:
-            raise DatabaseError(u'UPDATE COMPILER: UPDATE ticketID assumptions were wrong. Contact Alex Kavanaugh with details.')
+            raise DatabaseError('UPDATE COMPILER: UPDATE ticketID assumptions were wrong. Contact Alex Kavanaugh with details.')
         url = Update(self.connection.settings_dict, self.query.model._meta.db_table, ticketID, values).build()
 
         # Attempt the Update
-        request = urllib2.Request(url)
-
         try:
-            urllib2.urlopen(request)
-        except urllib2.HTTPError, message:
-            raise DatabaseError(self.query.model._meta.object_name + u' - An UPDATE error has occurred. Please contact the development team with the following details:\n\t' + unicode(str(message)))
+            requests.get(url)
+        except requests.exceptions.HTTPError, message:
+            raise DatabaseError(self.query.model._meta.object_name + ' - An UPDATE error has occurred. Please contact the development team with the following details:\n\t' + unicode(str(message)))
 
 
 class EwizDeleteCompiler(NonrelDeleteCompiler):
 
     @safe_call
     def execute_sql(self, result_type=None):
-        raise NotImplementedError(u"Deleting EnterpriseWizard records is generally ill-advised. Please contact your EnterpriseWizard administrator for more information.")
+        raise NotImplementedError("Deleting EnterpriseWizard records is generally ill-advised. Please contact your EnterpriseWizard administrator for more information.")
 
 # Assign new compiler classes as default compilers
 SQLCompiler = EwizCompiler

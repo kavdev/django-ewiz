@@ -20,7 +20,7 @@
 
 """
 
-from .djangotoolbox.db.base import (NonrelDatabaseFeatures, NonrelDatabaseOperations, NonrelDatabaseWrapper, NonrelDatabaseClient,
+from djangotoolbox.db.base import (NonrelDatabaseFeatures, NonrelDatabaseOperations, NonrelDatabaseWrapper, NonrelDatabaseClient,
                                 NonrelDatabaseValidation, NonrelDatabaseIntrospection, NonrelDatabaseCreation)
 
 

@@ -20,12 +20,12 @@
 
 """
 
-import urllib2
+import requests
 
 from .urlbuilders import Attach
 
 
-class EwizAttacher:
+class EwizAttacher(object):
     """Uploads an attachment to the EnterpriseWizard database.
 
     NOTE:
@@ -57,9 +57,7 @@ class EwizAttacher:
 
         self.build_url()
 
-        request = urllib2.Request(self.url, self.file.read(), {'Content-Type': 'application/octet-stream'})
-        request.get_method = lambda: 'PUT'
-        response = urllib2.urlopen(request)
+        response = requests.put(url=self.url, data=self.file.read(), headers={'Content-Type': 'application/octet-stream'})
 
         # Close the file stream
         self.file.close()

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 """
 
 .. module:: django-ewiz.decompiler
@@ -21,11 +23,12 @@
 """
 
 import sys
-import urllib2
 import re
 from functools import wraps
 
 from django.db.utils import DatabaseError
+
+import requests
 
 from .urlbuilders import Read
 
@@ -38,7 +41,7 @@ def safe_call(func):
         try:
             return func(*args, **kwargs)
         except Exception, message:
-            raise DatabaseError(str(message) + str(sys.exc_info()[2]))
+            raise DatabaseError(unicode(str(message)) + unicode(str(sys.exc_info()[2])))
 
     return _func
 
@@ -97,12 +100,10 @@ class EwizDecompiler(object):
 
         """
 
-        request = urllib2.Request(url)
-
         try:
-            response = urllib2.urlopen(request)
-        except urllib2.HTTPError, message:
-            raise self.model.DoesNotExist(self.model._meta.object_name + u' matching query does not exist.\n\t' + str(message))
+            response = requests.get(url)
+        except requests.exceptions.HTTPError, message:
+            raise self.model.DoesNotExist(self.model._meta.object_name + ' matching query does not exist.\n\t' + str(message))
 
         pattern = re.compile(r"^EWREST_id_.* = '(?P<value>.*)';$", re.DOTALL)
 
@@ -130,12 +131,10 @@ class EwizDecompiler(object):
     def __request_single(self, url):
         """Generates a response for a single ticket."""
 
-        request = urllib2.Request(url)
-
         try:
-            return urllib2.urlopen(request)
-        except urllib2.HTTPError, message:
-            raise self.model.DoesNotExist(self.model._meta.object_name + u' matching query does not exist.\n\t' + unicode(str(message)))
+            return requests.get(url)
+        except requests.exceptions.HTTPError, message:
+            raise self.model.DoesNotExist(self.model._meta.object_name + ' matching query does not exist.\n\t' + unicode(str(message)))
 
     def __decompile(self, response):
         """Parses a response into a field, value dictionary."""
