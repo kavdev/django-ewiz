@@ -108,7 +108,7 @@ class EwizDecompiler(object):
         pattern = re.compile(r"^EWREST_id_.* = '(?P<value>.*)';$", re.DOTALL)
 
         id_list = []
-        for line in iter(lambda: unicode(response.readline().decode('string-escape').strip(), 'ISO-8859-1'), ""):
+        for line in response.iter_lines(decode_unicode=True):
             try:
                 id_list.append(pattern.match(line).group('value'))
             except:
@@ -140,7 +140,7 @@ class EwizDecompiler(object):
         """Parses a response into a field, value dictionary."""
 
         data_list = []
-        for line in iter(lambda: unicode(response.readline().decode('string-escape').strip(), 'ISO-8859-1'), ""):
+        for line in response.iter_lines(decode_unicode=True):
             data_list.append(line)
 
         pattern = re.compile(r"^EWREST_(?P<key>.*?)='(?P<value>.*)';$", re.DOTALL)
