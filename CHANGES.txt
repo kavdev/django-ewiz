@@ -21,4 +21,5 @@ v1.1.18, 8/25/13 -- fixed README typos
 v1.1.19, 10/5/13 -- fixed attacher refactor bugs
 v1.1.20, 01/09/14 -- fixed README typos
 v1.2.0, 01/12/14 -- djangotoolbox update - now using pip dependency; now using requests instead of urllib2
-v1.2.0, 01/12/14 -- decompiler bugfix
+v1.2.1, 01/12/14 -- decompiler bugfix
+v1.2.2, 02/27/14 -- Update Compiler bugfix
