@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='django-ewiz',
-    version='1.2.2',
+    version='1.2.3',
     author='Alex Kavanaugh',
     author_email='kavanaugh.development@outlook.com',
     packages=['django_ewiz'],

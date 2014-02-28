@@ -396,9 +396,12 @@ class EwizUpdateCompiler(NonrelUpdateCompiler):
 
         # Build the url
         try:
-            ticketID = self.query.where.children[0][-1]
+            ticketID = self.query.where.children[0].children[0][-1]
         except:
-            raise DatabaseError('UPDATE COMPILER: UPDATE ticketID assumptions were wrong. Contact Alex Kavanaugh with details.')
+            try:
+                ticketID = self.query.where.children[0][-1]
+            except:
+                raise DatabaseError('UPDATE COMPILER: UPDATE ticketID assumptions were wrong. Contact Alex Kavanaugh with details.')
         url = Update(self.connection.settings_dict, self.query.model._meta.db_table, ticketID, values).build()
 
         # Attempt the Update
