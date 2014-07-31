@@ -24,9 +24,13 @@ from __future__ import unicode_literals
 
 import sys
 import urllib
+import logging
+
 from functools import wraps
 
 from django.db.utils import DatabaseError
+
+logger = logging.getLogger("django_ewiz_urls")
 
 
 def safe_call(func):
@@ -67,7 +71,10 @@ class Read(object):
 
     @safe_call
     def build(self):
-        return urllib.quote(self.protocol + self.host + 'EWRead?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id), ":/?$&='")
+        url = urllib.quote(self.protocol + self.host + 'EWRead?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id), ":/?$&='")
+        logger.debug(url)
+
+        return url
 
 
 class Select(object):
@@ -95,7 +102,10 @@ class Select(object):
 
     @safe_call
     def build(self):
-        return urllib.quote(self.__build_select() + self.__build_where(), ":/?$&='")
+        url = urllib.quote(self.__build_select() + self.__build_where(), ":/?$&='")
+        logger.debug(url)
+
+        return url
 
     def __build_select(self):
         return self.protocol + self.host + 'EWSelect?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language
@@ -148,7 +158,10 @@ class Insert(object):
 
     @safe_call
     def build(self):
-        return urllib.quote(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        url = urllib.quote(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        logger.debug(url)
+
+        return url
 
     @safe_call
     def __build_insert(self):
@@ -192,7 +205,10 @@ class Update(object):
 
     @safe_call
     def build(self):
-        return urllib.quote(self.__build_update() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        url = urllib.quote(self.__build_update() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        logger.debug(url)
+
+        return url
 
     @safe_call
     def __build_update(self):
@@ -236,4 +252,7 @@ class Attach(object):
 
     @safe_call
     def build(self):
-        return urllib.quote(self.protocol + self.host + 'EWAttach?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id) + '&field=' + str(self.field_name) + '&fileName=' + str(self.file_name), ":/?$&='")
+        url = urllib.quote(self.protocol + self.host + 'EWAttach?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id) + '&field=' + str(self.field_name) + '&fileName=' + str(self.file_name), ":/?$&='")
+        logger.debug(url)
+
+        return url
