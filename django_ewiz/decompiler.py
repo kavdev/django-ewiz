@@ -22,8 +22,8 @@ from __future__ import unicode_literals
 
 """
 
-import sys
 import re
+import urllib
 from functools import wraps
 
 from django.db.utils import DatabaseError
@@ -41,7 +41,7 @@ def safe_call(func):
         try:
             return func(*args, **kwargs)
         except Exception, message:
-            raise DatabaseError(unicode(str(message)) + unicode(str(sys.exc_info()[2])))
+            raise DatabaseError(unicode(str(message)))
 
     return _func
 
@@ -108,10 +108,12 @@ class EwizDecompiler(object):
         try:
             response.raise_for_status()
         except requests.exceptions.HTTPError, message:
-            if "Error executing query, please consult logs" in message:
-                message = message + ".  The query submitted most likely contains invalid or illegal syntax. Query:\n\t %s" % url.split("&$lang")[-1][2:]
+            message = unicode(str(message))
 
-            raise DatabaseError("An error occured while attempting to query the database: " + message)
+            if "Error executing query, please consult logs" in message:
+                message = message + ".\n\tThe query submitted most likely contains invalid or illegal syntax:\n\t %s" % urllib.unquote(url.split("&$lang=")[-1][2:])
+
+            raise DatabaseError("An error occured while attempting to query the database:\n\t" + message)
 
         return response
 
