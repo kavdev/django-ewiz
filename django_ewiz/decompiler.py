@@ -91,6 +91,30 @@ class EwizDecompiler(object):
 
         return count
 
+    def __attempt_request(self, url):
+        """
+
+        Attempts to submit a request to the server via its REST interface.
+
+        :param url: The url to send a request.
+        :type url: str
+        :returns: The server's response.
+        :raises: DatabaseError if the request fails.
+
+        """
+
+        response = requests.get(url)
+
+        try:
+            response.raise_for_status()
+        except requests.exceptions.HTTPError, message:
+            if "Error executing query, please consult logs" in message:
+                message = message + ".  The query submitted most likely contains invalid or illegal syntax. Query:\n\t %s" % url.split("&$lang")[-1][2:]
+
+            raise DatabaseError("An error occured while attempting to query the database: " + message)
+
+        return response
+
     def __request_multiple(self, url, count_only=False):
         """
 
@@ -100,41 +124,37 @@ class EwizDecompiler(object):
 
         """
 
-        try:
-            response = requests.get(url)
-        except requests.exceptions.HTTPError, message:
-            raise self.model.DoesNotExist(self.model._meta.object_name + ' matching query does not exist.\n\t' + str(message))
+        response = self.__attempt_request(url)
 
         pattern = re.compile(r"^EWREST_id_.* = '(?P<value>.*)';$", re.DOTALL)
 
-        id_list = []
-        for line in response.iter_lines(decode_unicode=True):
-            try:
-                id_list.append(pattern.match(line).group('value'))
-            except:
-                raise DatabaseError("Connection Error. The EnterpriseWizard database might be offline.")
-
-        count = int(id_list[0])
-        idList = id_list[1:]
         response_list = []
 
         # Return only the count before the heavy lifting if countOnly is True
         if count_only:
-            return count, response_list
+            first_line = response.iter_lines(decode_unicode=True).next()
+            count = pattern.match(first_line).group('value')
 
-        for ticket_id in idList:
-            response_url = Read(self.settings_dict, self.model._meta.db_table, ticket_id).build()
-            response_list.append(self.__request_single(response_url))
+            return count, response_list
+        else:
+            id_list = []
+
+            for line in response.iter_lines(decode_unicode=True):
+                id_list.append(pattern.match(line).group('value'))
+
+            count = int(id_list[0])
+            idList = id_list[1:]
+
+            for ticket_id in idList:
+                response_url = Read(self.settings_dict, self.model._meta.db_table, ticket_id).build()
+                response_list.append(self.__request_single(response_url))
 
         return count, response_list
 
     def __request_single(self, url):
         """Generates a response for a single ticket."""
 
-        try:
-            return requests.get(url)
-        except requests.exceptions.HTTPError, message:
-            raise self.model.DoesNotExist(self.model._meta.object_name + ' matching query does not exist.\n\t' + unicode(str(message)))
+        return self.__attempt_request(url)
 
     def __decompile(self, response):
         """Parses a response into a field, value dictionary."""
