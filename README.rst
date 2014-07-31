@@ -4,12 +4,13 @@ django-ewiz
 A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:Version:           1.2.1
+:Version:           1.3.0
 :Dependencies:      Python 2.7, Django 1.5+, djangotoolbox>=1.6.2, requests>=2.2.0
-:Home page:         https://bitbucket.org/alex_kavanaugh/django-ewiz
+:Home page:         https://bitbucket.org/kavanaugh_development/django-ewiz
 :Author:            Alex Kavanaugh <kavanaugh.development@outlook.com>
 :License:           GNU LGPL (http://www.gnu.org/licenses/lgpl.html)
 
+*NOTE:* Versions 1.3+ will work with the EnterpriseWizard anti-sql block. In order to achieve this, regular expression and case-insensitive query operations were removed.
 
 Installation
 ============
@@ -50,20 +51,30 @@ That's it! All database operations performed will be abstracted and should funct
 
 *The following query operations are supported:*
 
-* exact
 * iexact
-* contains
 * icontains
-* regex
-* iregex
+* in
 * gt
 * gte
 * lt
 * lte
-* startswith
-* endswith
 * istartswith
 * iendswith
+* range
+* year
+* isnull
+
+*The following query operations will be converted to their respective case-insensitive forms:* `(version 1.3+)`
+
+* exact
+* contains
+* startswith
+* endswith
+
+*The following query operations are no longer supported:* `(version 1.3+)`
+
+* regex
+* iregex
 
 *NOTE:* Not all ticket fields can be changed via REST. Add ``editable=False`` as a model option to remove DatabaseErrors.
 
