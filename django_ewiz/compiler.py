@@ -37,6 +37,8 @@ from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelIn
 from .decompiler import EwizDecompiler
 from .urlbuilders import Select, Update, Insert
 
+MAX_LIMIT = '9223372036854775807'  # Max limit as proposed by MySQL / 2 (for some reason...)
+
 
 def safe_call(func):
     """Function wrapper for debugging - taken from Django-Nonrel/djangotoolbox."""
@@ -62,23 +64,22 @@ class EwizQuery(NonrelQuery):
 
     # A dictionary of operators and their ewiz REST representations.
     operators = {
-        'exact': lambda lookup_type, value: ("= BINARY", "'" + unicode(str(value)) + "'"),
+        'exact': lambda lookup_type, value: ("=", "'" + unicode(str(value)) + "'"),
         'iexact': lambda lookup_type, value: ("=", "'" + unicode(str(value)) + "'"),
-        'contains': lambda lookup_type, value: ("LIKE BINARY", "'%" + unicode(str(value)) + "%'"),
+        'contains': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "%'"),
         'icontains': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "%'"),
         'gt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
         'gte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
         'lt': lambda lookup_type, value: ("<", "'" + unicode(str(value)) + "'"),
         'lte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
-        'in': lambda lookup_type, value: ("IN", value),
-        'startswith': lambda lookup_type, value: ("LIKE BINARY", "'" + unicode(str(value)) + "%'"),
+        'in': lambda lookup_type, values: ("IN", "(" + ", ".join(["'" + unicode(str(value)) + "'" for value in values]) + ")"),
+        'startswith': lambda lookup_type, value: ("LIKE", "'" + unicode(str(value)) + "%'"),
         'istartswith': lambda lookup_type, value: ("LIKE", "'" + unicode(str(value)) + "%'"),
-        'endswith': lambda lookup_type, value: ("LIKE BINARY", "'%" + unicode(str(value)) + "'"),
+        'endswith': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "'"),
         'iendswith': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "'"),
-        'range': lambda lookup_type, value: ("BETWEEN", unicode(str(value))),
+        'range': lambda lookup_type, values: ("BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
+        'year': lambda lookup_type, values: ("BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
         'isnull': lambda lookup_type, value: ("IS NULL", None),
-        'regex': lambda lookup_type, value: ("REGEXP BINARY", "'" + unicode(str(value)) + "'"),
-        'iregex': lambda lookup_type, value: ("REGEXP", "'" + unicode(str(value)) + "'"),
     }
 
     # A dictionary of operators and their negated ewiz REST representations.
@@ -91,15 +92,14 @@ class EwizQuery(NonrelQuery):
         'gte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
         'lt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
         'lte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
-        'in': lambda lookup_type, value: ("NOT IN", value),
+        'in': lambda lookup_type, values: ("NOT IN", "(" + ", ".join(["'" + unicode(str(value)) + "'" for value in values]) + ")"),
         'startswith': lambda lookup_type, value: ("NOT LIKE BINARY", "'" + unicode(str(value)) + "%'"),
         'istartswith': lambda lookup_type, value: ("NOT LIKE", "'" + unicode(str(value)) + "%'"),
         'endswith': lambda lookup_type, value: ("NOT LIKE BINARY", "'%" + unicode(str(value)) + "'"),
         'iendswith': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "'"),
-        'range': lambda lookup_type, value: ("NOT BETWEEN", unicode(str(value))),
+        'range': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
+        'year': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
         'isnull': lambda lookup_type, value: ("IS NOT NULL", None),
-        'regex': lambda lookup_type, value: ("NOT REGEXP BINARY", "'" + unicode(str(value)) + "'"),
-        'iregex': lambda lookup_type, value: ("NOT REGEXP", "'" + unicode(str(value)) + "'"),
     }
 
     def __init__(self, compiler, fields):
@@ -110,7 +110,7 @@ class EwizQuery(NonrelQuery):
             'ordering': [],
             'limits': {
                 'offset': '0',
-                'limit': '18446744073709551615'  # Max limit as proposed by MySQL,
+                'limit': MAX_LIMIT
             },
         }
 
@@ -142,7 +142,7 @@ class EwizQuery(NonrelQuery):
         if high_mark is None:
             # Infinite fetching
             self.compiled_query["limits"]["offset"] = unicode(str(low_mark))
-            self.compiled_query["limits"]["limit"] = '18446744073709551615'  # Max limit as proposed by MySQL
+            self.compiled_query["limits"]["limit"] = MAX_LIMIT
         elif high_mark > low_mark:
             # Range fetching
             self.compiled_query["limits"]["offset"] = unicode(str(low_mark))

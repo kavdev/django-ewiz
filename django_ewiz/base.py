@@ -30,20 +30,22 @@ class DatabaseOperations(NonrelDatabaseOperations):
 
 class DatabaseWrapper(NonrelDatabaseWrapper):
     operators = {
-        'exact': "= BINARY '%s'",
+        'exact': "= '%s'",
         'iexact': "= '%s'",
-        'contains': "LIKE BINARY '%%25%s%%25'",
+        'contains': "LIKE '%%25%s%%25'",
         'icontains': "LIKE '%%25%s%%25'",
-        'regex': "REGEXP BINARY '%s'",
-        'iregex': "REGEXP '%s'",
         'gt': "> '%s'",
         'gte': ">= '%s'",
         'lt': "< '%s'",
         'lte': "<= '%s'",
-        'startswith': "LIKE BINARY '%s%%25'",
-        'endswith': "LIKE BINARY '%%25%s'",
+        'startswith': "LIKE '%s%%25'",
+        'endswith': "LIKE '%%25%s'",
         'istartswith': "LIKE '%s%%25'",
         'iendswith': "LIKE '%%25%s'",
+        'in': "IN (%s)",
+        'range': "BETWEEN AND(%s)",
+        'year': "BETWEEN AND(%s)",
+        'isnull': "IS NULL",
     }
 
     def __init__(self, *args, **kwargs):
