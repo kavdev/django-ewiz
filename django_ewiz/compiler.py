@@ -84,18 +84,18 @@ class EwizQuery(NonrelQuery):
 
     # A dictionary of operators and their negated ewiz REST representations.
     negated_operators = {
-        'exact': lambda lookup_type, value: ("!= BINARY", "'" + unicode(str(value)) + "'"),
+        'exact': lambda lookup_type, value: ("!=", "'" + unicode(str(value)) + "'"),
         'iexact': lambda lookup_type, value: ("!=", "'" + unicode(str(value)) + "'"),
-        'contains': lambda lookup_type, value: ("NOT LIKE BINARY", "'%" + unicode(str(value)) + "%'"),
+        'contains': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "%'"),
         'icontains': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "%'"),
         'gt': lambda lookup_type, value: ("<", "'" + unicode(str(value)) + "'"),
         'gte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
         'lt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
         'lte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
         'in': lambda lookup_type, values: ("NOT IN", "(" + ", ".join(["'" + unicode(str(value)) + "'" for value in values]) + ")"),
-        'startswith': lambda lookup_type, value: ("NOT LIKE BINARY", "'" + unicode(str(value)) + "%'"),
+        'startswith': lambda lookup_type, value: ("NOT LIKE", "'" + unicode(str(value)) + "%'"),
         'istartswith': lambda lookup_type, value: ("NOT LIKE", "'" + unicode(str(value)) + "%'"),
-        'endswith': lambda lookup_type, value: ("NOT LIKE BINARY", "'%" + unicode(str(value)) + "'"),
+        'endswith': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "'"),
         'iendswith': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "'"),
         'range': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
         'year': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),

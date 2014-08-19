@@ -24,3 +24,5 @@ v1.2.0, 01/12/14 -- djangotoolbox update - now using pip dependency; now using r
 v1.2.1, 01/12/14 -- decompiler bugfix
 v1.2.2, 02/27/14 -- Update Compiler bugfix
 v1.2.3, 02/27/14 -- Update Compiler bugfix round 2
+v1.3.0, 07/30/14 -- Anti-SQL Block compliance
+v1.3.1, 08/19/14 -- Fixed negation operators
