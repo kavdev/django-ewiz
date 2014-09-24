@@ -4,8 +4,8 @@ django-ewiz
 A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:Version:           1.3.1
-:Dependencies:      Python 2.7, Django 1.5+, djangotoolbox>=1.6.2, requests>=2.2.0
+:Version:           1.3.2
+:Dependencies:      Python 2.7, Django>=1.5, djangotoolbox>=1.6.2, requests>=2.2.0
 :Home page:         https://bitbucket.org/kavanaugh_development/django-ewiz
 :Author:            Alex Kavanaugh <kavanaugh.development@outlook.com>
 :License:           GNU LGPL (http://www.gnu.org/licenses/lgpl.html)
