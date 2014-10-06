@@ -27,3 +27,4 @@ v1.2.3, 02/27/14 -- Update Compiler bugfix round 2
 v1.3.0, 07/30/14 -- Anti-SQL Block compliance
 v1.3.1, 08/19/14 -- Fixed negation operators
 v1.3.2, 09/24/14 -- Django 1.7 fix in Update Compiler
+v1.3.3, 10/06/14 -- Python 3 compatibility

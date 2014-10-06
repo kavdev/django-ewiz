@@ -47,8 +47,8 @@ def safe_call(func):
     def _func(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception, message:
-            raise DatabaseError(unicode(str(message)) + unicode(str(sys.exc_info()[2])))
+        except Exception as message:
+            raise DatabaseError(str(message) + str(sys.exc_info()[2]))
 
     return _func
 
@@ -64,41 +64,41 @@ class EwizQuery(NonrelQuery):
 
     # A dictionary of operators and their ewiz REST representations.
     operators = {
-        'exact': lambda lookup_type, value: ("=", "'" + unicode(str(value)) + "'"),
-        'iexact': lambda lookup_type, value: ("=", "'" + unicode(str(value)) + "'"),
-        'contains': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "%'"),
-        'icontains': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "%'"),
-        'gt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
-        'gte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
-        'lt': lambda lookup_type, value: ("<", "'" + unicode(str(value)) + "'"),
-        'lte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
-        'in': lambda lookup_type, values: ("IN", "(" + ", ".join(["'" + unicode(str(value)) + "'" for value in values]) + ")"),
-        'startswith': lambda lookup_type, value: ("LIKE", "'" + unicode(str(value)) + "%'"),
-        'istartswith': lambda lookup_type, value: ("LIKE", "'" + unicode(str(value)) + "%'"),
-        'endswith': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "'"),
-        'iendswith': lambda lookup_type, value: ("LIKE", "'%" + unicode(str(value)) + "'"),
-        'range': lambda lookup_type, values: ("BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
-        'year': lambda lookup_type, values: ("BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
+        'exact': lambda lookup_type, value: ("=", "'" + str(value) + "'"),
+        'iexact': lambda lookup_type, value: ("=", "'" + str(value) + "'"),
+        'contains': lambda lookup_type, value: ("LIKE", "'%" + str(value) + "%'"),
+        'icontains': lambda lookup_type, value: ("LIKE", "'%" + str(value) + "%'"),
+        'gt': lambda lookup_type, value: (">", "'" + str(value) + "'"),
+        'gte': lambda lookup_type, value: (">=", "'" + str(value) + "'"),
+        'lt': lambda lookup_type, value: ("<", "'" + str(value) + "'"),
+        'lte': lambda lookup_type, value: ("<=", "'" + str(value) + "'"),
+        'in': lambda lookup_type, values: ("IN", "(" + ", ".join(["'" + str(value) + "'" for value in values]) + ")"),
+        'startswith': lambda lookup_type, value: ("LIKE", "'" + str(value) + "%'"),
+        'istartswith': lambda lookup_type, value: ("LIKE", "'" + str(value) + "%'"),
+        'endswith': lambda lookup_type, value: ("LIKE", "'%" + str(value) + "'"),
+        'iendswith': lambda lookup_type, value: ("LIKE", "'%" + str(value) + "'"),
+        'range': lambda lookup_type, values: ("BETWEEN", " AND ".join(["'" + str(value) + "'" for value in values])),
+        'year': lambda lookup_type, values: ("BETWEEN", " AND ".join(["'" + str(value) + "'" for value in values])),
         'isnull': lambda lookup_type, value: ("IS NULL", None),
     }
 
     # A dictionary of operators and their negated ewiz REST representations.
     negated_operators = {
-        'exact': lambda lookup_type, value: ("!=", "'" + unicode(str(value)) + "'"),
-        'iexact': lambda lookup_type, value: ("!=", "'" + unicode(str(value)) + "'"),
-        'contains': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "%'"),
-        'icontains': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "%'"),
-        'gt': lambda lookup_type, value: ("<", "'" + unicode(str(value)) + "'"),
-        'gte': lambda lookup_type, value: ("<=", "'" + unicode(str(value)) + "'"),
-        'lt': lambda lookup_type, value: (">", "'" + unicode(str(value)) + "'"),
-        'lte': lambda lookup_type, value: (">=", "'" + unicode(str(value)) + "'"),
-        'in': lambda lookup_type, values: ("NOT IN", "(" + ", ".join(["'" + unicode(str(value)) + "'" for value in values]) + ")"),
-        'startswith': lambda lookup_type, value: ("NOT LIKE", "'" + unicode(str(value)) + "%'"),
-        'istartswith': lambda lookup_type, value: ("NOT LIKE", "'" + unicode(str(value)) + "%'"),
-        'endswith': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "'"),
-        'iendswith': lambda lookup_type, value: ("NOT LIKE", "'%" + unicode(str(value)) + "'"),
-        'range': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
-        'year': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + unicode(str(value)) + "'" for value in values])),
+        'exact': lambda lookup_type, value: ("!=", "'" + str(value) + "'"),
+        'iexact': lambda lookup_type, value: ("!=", "'" + str(value) + "'"),
+        'contains': lambda lookup_type, value: ("NOT LIKE", "'%" + str(value) + "%'"),
+        'icontains': lambda lookup_type, value: ("NOT LIKE", "'%" + str(value) + "%'"),
+        'gt': lambda lookup_type, value: ("<", "'" + str(value) + "'"),
+        'gte': lambda lookup_type, value: ("<=", "'" + str(value) + "'"),
+        'lt': lambda lookup_type, value: (">", "'" + str(value) + "'"),
+        'lte': lambda lookup_type, value: (">=", "'" + str(value) + "'"),
+        'in': lambda lookup_type, values: ("NOT IN", "(" + ", ".join(["'" + str(value) + "'" for value in values]) + ")"),
+        'startswith': lambda lookup_type, value: ("NOT LIKE", "'" + str(value) + "%'"),
+        'istartswith': lambda lookup_type, value: ("NOT LIKE", "'" + str(value) + "%'"),
+        'endswith': lambda lookup_type, value: ("NOT LIKE", "'%" + str(value) + "'"),
+        'iendswith': lambda lookup_type, value: ("NOT LIKE", "'%" + str(value) + "'"),
+        'range': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + str(value) + "'" for value in values])),
+        'year': lambda lookup_type, values: ("NOT BETWEEN", " AND ".join(["'" + str(value) + "'" for value in values])),
         'isnull': lambda lookup_type, value: ("IS NOT NULL", None),
     }
 
@@ -116,10 +116,10 @@ class EwizQuery(NonrelQuery):
 
     def __debug(self):
         return ('DEBUG INFO:' +
-            '\n\nRAW_QUERY: ' + str(self.query) +
-            '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
-            '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
-        )
+                '\n\nRAW_QUERY: ' + str(self.query) +
+                '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
+                '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
+                )
 
     @safe_call
     def fetch(self, low_mark=0, high_mark=None):
@@ -141,16 +141,16 @@ class EwizQuery(NonrelQuery):
 
         if high_mark is None:
             # Infinite fetching
-            self.compiled_query["limits"]["offset"] = unicode(str(low_mark))
+            self.compiled_query["limits"]["offset"] = str(low_mark)
             self.compiled_query["limits"]["limit"] = MAX_LIMIT
         elif high_mark > low_mark:
             # Range fetching
-            self.compiled_query["limits"]["offset"] = unicode(str(low_mark))
-            self.compiled_query["limits"]["limit"] = unicode(str(high_mark - low_mark))
+            self.compiled_query["limits"]["offset"] = str(low_mark)
+            self.compiled_query["limits"]["limit"] = str(high_mark - low_mark)
         else:
             # Invalid range
-            self.compiled_query["limits"]["offset"] = unicode(str(0))
-            self.compiled_query["limits"]["limit"] = unicode(str(0))
+            self.compiled_query["limits"]["offset"] = str(0)
+            self.compiled_query["limits"]["limit"] = str(0)
 
         # Build the url
         url = Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build()
@@ -176,7 +176,7 @@ class EwizQuery(NonrelQuery):
 
         # Pass given limit to the compiled query
         if limit:
-            self.compiled_query["limits"]["limit"] = str(unicode(limit))
+            self.compiled_query["limits"]["limit"] = str(limit)
 
         # Build the url
         url = Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build()
@@ -287,8 +287,7 @@ class EwizCompiler(NonrelCompiler):
             aggregate = aggregates[0]
             assert isinstance(aggregate, sqlaggregates.Count)
             opts = self.query.get_meta()
-            assert aggregate.col == '*' or \
-                   aggregate.col == (opts.db_table, opts.pk.column)
+            assert aggregate.col == '*' or aggregate.col == (opts.db_table, opts.pk.column)
             count = self.get_count()
             if result_type is SINGLE:
                 return [count]
@@ -351,7 +350,7 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
             docs.append(doc)
 
         if len(docs) > 1:
-            raise DatabaseError('INSERT COMPILER: Docs length assumption was wrong. Contact Alex Kavanaugh with details./n/tDocs Length: ' + unicode(str(len(docs))))
+            raise DatabaseError('INSERT COMPILER: Docs length assumption was wrong. Contact Alex Kavanaugh with details./n/tDocs Length: ' + str(len(docs)))
 
         key = self.insert(docs[0], return_id=return_id)
         # Pass the key value through normal database deconversion.
@@ -377,8 +376,8 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
 
                 return int(new_id)
 
-        except requests.exceptions.HTTPError, message:
-            raise DatabaseError(self.query.model._meta.object_name + ' - An INSERT error has occurred. Please contact the development team with the following details:\n\t' + unicode(str(message)))
+        except requests.exceptions.HTTPError as message:
+            raise DatabaseError(self.query.model._meta.object_name + ' - An INSERT error has occurred. Please contact the development team with the following details:\n\t' + str(message))
 
 
 class EwizUpdateCompiler(NonrelUpdateCompiler):
@@ -412,8 +411,8 @@ class EwizUpdateCompiler(NonrelUpdateCompiler):
         # Attempt the Update
         try:
             requests.get(url)
-        except requests.exceptions.HTTPError, message:
-            raise DatabaseError(self.query.model._meta.object_name + ' - An UPDATE error has occurred. Please contact the development team with the following details:\n\t' + unicode(str(message)))
+        except requests.exceptions.HTTPError as message:
+            raise DatabaseError(self.query.model._meta.object_name + ' - An UPDATE error has occurred. Please contact the development team with the following details:\n\t' + str(message))
 
 
 class EwizDeleteCompiler(NonrelDeleteCompiler):

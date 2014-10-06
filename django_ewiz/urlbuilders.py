@@ -23,8 +23,14 @@ from __future__ import unicode_literals
 """
 
 import sys
-import urllib
 import logging
+
+# Python 2 compatibility
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
+
 
 from functools import wraps
 
@@ -40,8 +46,8 @@ def safe_call(func):
     def _func(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception, message:
-            raise DatabaseError(unicode(str(message)) + unicode(str(sys.exc_info()[2])))
+        except Exception as message:
+            raise DatabaseError(str(message) + str(sys.exc_info()[2]))
 
     return _func
 
@@ -71,7 +77,7 @@ class Read(object):
 
     @safe_call
     def build(self):
-        url = urllib.quote(self.protocol + self.host + 'EWRead?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id), ":/?$&='")
+        url = quote(self.protocol + self.host + 'EWRead?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id), ":/?$&='")
         logger.debug(url)
 
         return url
@@ -102,7 +108,7 @@ class Select(object):
 
     @safe_call
     def build(self):
-        url = urllib.quote(self.__build_select() + self.__build_where(), ":/?$&='")
+        url = quote(self.__build_select() + self.__build_where(), ":/?$&='")
         logger.debug(url)
 
         return url
@@ -158,7 +164,7 @@ class Insert(object):
 
     @safe_call
     def build(self):
-        url = urllib.quote(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        url = quote(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
         logger.debug(url)
 
         return url
@@ -173,7 +179,7 @@ class Insert(object):
         for field, value in self.data:
             # Only insert if the field is editable and the field has a value or is allowed to be blank
             if (value or field.blank):  # field.editable and
-                data_string += '&' + field.column + '=' + field.help_text + unicode(str(value))
+                data_string += '&' + field.column + '=' + field.help_text + str(value)
 
         return data_string
 
@@ -200,12 +206,12 @@ class Update(object):
         self.password = settings_dict["PASSWORD"]
         self.language = 'en'
         self.table = table
-        self.ticket_id = unicode(str(ticket_id))
+        self.ticket_id = str(ticket_id)
         self.data = data
 
     @safe_call
     def build(self):
-        url = urllib.quote(self.__build_update() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        url = quote(self.__build_update() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
         logger.debug(url)
 
         return url
@@ -220,7 +226,7 @@ class Update(object):
         for field, value in self.data:
             # Only update if the field is editable and the field has a value or is allowed to be blank
             if field.editable and (value or field.blank):
-                data_string += '&' + field.column + '=' + field.help_text + unicode(str(value))
+                data_string += '&' + field.column + '=' + field.help_text + str(value)
 
         return data_string
 
@@ -252,7 +258,7 @@ class Attach(object):
 
     @safe_call
     def build(self):
-        url = urllib.quote(self.protocol + self.host + 'EWAttach?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id) + '&field=' + str(self.field_name) + '&fileName=' + str(self.file_name), ":/?$&='")
+        url = quote(self.protocol + self.host + 'EWAttach?$KB=' + self.knowledge_base + '&$table=' + self.table + '&$login=' + self.login + '&$password=' + self.password + '&$lang=' + self.language + '&id=' + str(self.ticket_id) + '&field=' + str(self.field_name) + '&fileName=' + str(self.file_name), ":/?$&='")
         logger.debug(url)
 
         return url

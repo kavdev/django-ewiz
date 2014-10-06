@@ -4,8 +4,8 @@ django-ewiz
 A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:Version:           1.3.2
-:Dependencies:      Python 2.7, Django>=1.5, djangotoolbox>=1.6.2, requests>=2.2.0
+:Version:           1.3.3
+:Dependencies:      Python 2.7+, 3.0+, Django>=1.5, djangotoolbox>=1.6.2, requests>=2.2.0
 :Home page:         https://bitbucket.org/kavanaugh_development/django-ewiz
 :Author:            Alex Kavanaugh <kavanaugh.development@outlook.com>
 :License:           GNU LGPL (http://www.gnu.org/licenses/lgpl.html)
@@ -119,7 +119,7 @@ File Upload Example
 .. code:: python
 
     from django.forms import Form, FileField
-    
+
     class EwizUploadForm(Form):
         uploaded_file = FileField(required=True)
 
@@ -129,14 +129,14 @@ File Upload Example
 .. code:: python
 
     from django.db.models import Model, AutoField, CharField
-    
+
     class AccountRequest(Model):
         ticket_id = AutoField(primary_key=True, db_column='id')
         subject_username = CharField(help_text=':')
-        
+
         # Use this field only in conjunction with EwizAttacher - do not attempt to directly populate it
         file_field = CharField(help_text='file', editable=False, db_column='attached_files')
-        
+
         class Meta:
             db_table = u'account_request'
             managed = False
@@ -148,23 +148,23 @@ File Upload Example
 
     from django.conf import settings
     from django.views.generic.edit import FormView
-    
+
     from django_ewiz import EwizAttacher
-    
+
     from .forms import EwizUploadForm
     from .models import AccountRequest
-    
+
     class UploadDemoView(FormView):
         template_name = "ewizdemo.html"
         form_class = EwizUploadForm
-    
+
         def form_valid(self, form):
             # Create a new account request
             ticket = AccountRequest(subject_username=self.request.user.username)
             ticket.save()
-    
+
             # Grab the file
             file_reference = self.request.FILES['uploaded_file'].file
-    
+
             # Upload the file
             EwizAttacher(settings_dict=settings.DATABASES['default'], model=ticket, file_reference=file_reference, file_name=self.request.user.username + u'.pdf').attach_file()
