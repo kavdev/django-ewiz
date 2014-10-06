@@ -274,7 +274,7 @@ class EwizCompiler(NonrelCompiler):
 
         """
 
-        aggregates = self.query.aggregate_select.values()
+        aggregates = list(self.query.aggregate_select.values())
 
         try:
             saveCheck = self.query.extra["a"] == ('1', [])
