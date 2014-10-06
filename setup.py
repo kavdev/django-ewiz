@@ -28,7 +28,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: Database :: Database Engines/Servers"
+        "Topic :: Database :: Database Engines/Servers",
         "Topic :: Utilities",
     ],
     install_requires=[
