@@ -20,9 +20,13 @@
 
 """
 
+import logging
+
 import requests
 
 from .urlbuilders import Attach
+
+logging.getLogger("django_ewiz")
 
 
 class EwizAttacher(object):

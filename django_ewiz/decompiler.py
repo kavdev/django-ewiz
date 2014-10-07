@@ -20,6 +20,7 @@
 
 """
 
+import logging
 import re
 from functools import wraps
 
@@ -36,18 +37,7 @@ import requests
 
 from .urlbuilders import Read
 
-
-def safe_call(func):
-    """Function wrapper for debugging - taken from Django-Nonrel/djangotoolbox."""
-
-    @wraps(func)
-    def _func(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as message:
-            raise DatabaseError(str(message))
-
-    return _func
+logging.getLogger("django_ewiz")
 
 
 class EwizDecompiler(object):
@@ -63,7 +53,6 @@ class EwizDecompiler(object):
         self.model = model
         self.settings_dict = settings_dict
 
-    @safe_call
     def decompile(self, url):
         """
 
@@ -81,7 +70,6 @@ class EwizDecompiler(object):
 
         return query_list
 
-    @safe_call
     def count(self, url):
         """
 

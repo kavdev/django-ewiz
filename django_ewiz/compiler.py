@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 """
 
 .. module:: django-ewiz.compiler
@@ -38,7 +36,7 @@ from .urlbuilders import Select, Update, Insert
 
 MAX_LIMIT = '9223372036854775807'  # Max limit as proposed by MySQL / 2 (for some reason...)
 
-logging.getLogger(__name__)
+logging.getLogger("django_ewiz")
 
 
 class EwizQuery(NonrelQuery):
