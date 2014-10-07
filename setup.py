@@ -36,4 +36,5 @@ setup(
         "djangotoolbox>=1.6.2",
         "requests>=2.3.0",
     ],
+    use_2to3=True,
 )
