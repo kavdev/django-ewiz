@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 """
 
 .. module:: django-ewiz.decompiler
@@ -32,6 +30,7 @@ except ImportError:
     from urllib.parse import unquote
 
 from django.db.utils import DatabaseError
+from django.utils.encoding import smart_str
 
 import requests
 
@@ -140,14 +139,14 @@ class EwizDecompiler(object):
         # Return only the count before the heavy lifting if countOnly is True
         if count_only:
             first_line = response.iter_lines(decode_unicode=True).next()
-            count = pattern.match(first_line).group('value')
+            count = pattern.match(smart_str(first_line)).group('value')
 
             return count, response_list
         else:
             id_list = []
 
             for line in response.iter_lines(decode_unicode=True):
-                id_list.append(pattern.match(line).group('value'))
+                id_list.append(pattern.match(smart_str(line)).group('value'))
 
             count = int(id_list[0])
             idList = id_list[1:]
@@ -168,7 +167,7 @@ class EwizDecompiler(object):
 
         data_list = []
         for line in response.iter_lines(decode_unicode=True):
-            data_list.append(line)
+            data_list.append(smart_str(line))
 
         pattern = re.compile(r"^EWREST_(?P<key>.*?)='(?P<value>.*)';$", re.DOTALL)
 

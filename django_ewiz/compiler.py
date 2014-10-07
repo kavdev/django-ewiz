@@ -22,9 +22,8 @@ from __future__ import unicode_literals
 
 """
 
-import sys
+import logging
 import re
-from functools import wraps
 
 from django.db.utils import DatabaseError, IntegrityError
 from django.db.models.sql.constants import SINGLE, MULTI
@@ -39,18 +38,7 @@ from .urlbuilders import Select, Update, Insert
 
 MAX_LIMIT = '9223372036854775807'  # Max limit as proposed by MySQL / 2 (for some reason...)
 
-
-def safe_call(func):
-    """Function wrapper for debugging - taken from Django-Nonrel/djangotoolbox."""
-
-    @wraps(func)
-    def _func(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as message:
-            raise DatabaseError(str(message) + str(sys.exc_info()[2]))
-
-    return _func
+logging.getLogger(__name__)
 
 
 class EwizQuery(NonrelQuery):
@@ -121,7 +109,6 @@ class EwizQuery(NonrelQuery):
                 '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
                 )
 
-    @safe_call
     def fetch(self, low_mark=0, high_mark=None):
         """
 
@@ -162,7 +149,6 @@ class EwizQuery(NonrelQuery):
         for result in query_results:
             yield result
 
-    @safe_call
     def count(self, limit=None):
         """
 
@@ -185,11 +171,9 @@ class EwizQuery(NonrelQuery):
 
         return count
 
-    @safe_call
     def delete(self):
         raise NotImplementedError("Deleting EnterpriseWizard records is generally ill-advised. Please contact your EnterpriseWizard administrator for more information.")
 
-    @safe_call
     def order_by(self, ordering):
         """
 
@@ -224,7 +208,6 @@ class EwizQuery(NonrelQuery):
 
             raise DatabaseError("The 'ORDER BY' statement is not currently supported by the EnterpriseWizard REST interface.")
 
-    @safe_call
     def add_filter(self, field, lookup_type, negated, value):
         """
 
@@ -320,7 +303,6 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
 
     """
 
-    @safe_call
     def execute_sql(self, return_id=False):
         """
 
@@ -356,7 +338,6 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
         # Pass the key value through normal database deconversion.
         return self.ops.convert_values(self.ops.value_from_db(key, pk), pk)
 
-    @safe_call
     def insert(self, values, return_id):
         """Builds and sends a query to create a new ticket in the Ewiz database."""
 
@@ -389,7 +370,6 @@ class EwizUpdateCompiler(NonrelUpdateCompiler):
 
     """
 
-    @safe_call
     def update(self, values):
         """Builds and sends a query to update/change information in a ticket that currently exists in the Ewiz database."""
 
@@ -417,7 +397,6 @@ class EwizUpdateCompiler(NonrelUpdateCompiler):
 
 class EwizDeleteCompiler(NonrelDeleteCompiler):
 
-    @safe_call
     def execute_sql(self, result_type=None):
         raise NotImplementedError("Deleting EnterpriseWizard records is generally ill-advised. Please contact your EnterpriseWizard administrator for more information.")
 
