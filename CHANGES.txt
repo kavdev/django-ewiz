@@ -32,3 +32,4 @@ v1.3.4, 10/06/14 -- Bugfix
 v1.3.5, 10/06/14 -- Bugfix
 v1.3.6, 10/07/14 -- Python 3 fixes, improved logging
 v1.3.7, 10/07/14 -- Forgot a bunch of logging stuff...
+v1.3.8, 10/13/14 -- bugfix

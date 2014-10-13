@@ -27,6 +27,7 @@ from django.db.utils import DatabaseError, IntegrityError
 from django.db.models.sql.constants import SINGLE, MULTI
 from django.db.models.sql import aggregates as sqlaggregates
 from django.utils.datastructures import SortedDict
+from django.utils.encoding import smart_str
 
 import requests
 from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
@@ -351,7 +352,7 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
                 pattern = re.compile(r"^EWREST_id='(?P<value>.*)';$", re.DOTALL)
 
                 line = next(response.iter_lines(decode_unicode=True))
-                new_id = pattern.match(line).group('value')
+                new_id = pattern.match(smart_str(line)).group('value')
 
                 return int(new_id)
 

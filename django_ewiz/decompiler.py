@@ -22,7 +22,6 @@
 
 import logging
 import re
-from functools import wraps
 
 # Python 2 compatibility
 try:
