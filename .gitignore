@@ -1,5 +1,5 @@
 MANIFEST
 dist/*
+build/*
 .project
 .pydevproject
-.pypirc

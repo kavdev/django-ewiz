@@ -392,6 +392,8 @@ class EwizUpdateCompiler(NonrelUpdateCompiler):
             requests.get(url)
         except requests.exceptions.HTTPError as message:
             raise DatabaseError(self.query.model._meta.object_name + ' - An UPDATE error has occurred. Please contact the development team with the following details:\n\t' + str(message))
+        else:
+            return 1  # Django expects a pass/fail response
 
 
 class EwizDeleteCompiler(NonrelDeleteCompiler):
