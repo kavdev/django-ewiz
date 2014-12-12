@@ -1,5 +1,6 @@
 MANIFEST
 dist/*
 build/*
+django_ewiz.egg-info/*
 .project
 .pydevproject
