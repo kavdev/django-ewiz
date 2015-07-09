@@ -25,7 +25,6 @@ import re
 
 from django.db.utils import DatabaseError, IntegrityError
 from django.db.models.sql.constants import SINGLE, MULTI
-from django.db.models.sql import aggregates as sqlaggregates
 from django.utils.datastructures import SortedDict
 from django.utils.encoding import smart_str
 
@@ -267,9 +266,18 @@ class EwizCompiler(NonrelCompiler):
         if aggregates:
             assert len(aggregates) == 1
             aggregate = aggregates[0]
-            assert isinstance(aggregate, sqlaggregates.Count)
+            try:
+                assert aggregate.function == 'COUNT'
+            except AttributeError:
+                assert aggregate.sql_function == 'COUNT'
+
             opts = self.query.get_meta()
-            assert aggregate.col == '*' or aggregate.col == (opts.db_table, opts.pk.column)
+
+            try:
+                assert aggregate.input_field.value == '*' or aggregate.input_field == (opts.db_table, opts.pk.column)  # Fair warning: the latter part of this or statement hasn't been tested
+            except AttributeError:
+                assert aggregate.col == '*' or aggregate.col == (opts.db_table, opts.pk.column)
+
             count = self.get_count()
             if result_type is SINGLE:
                 return [count]
