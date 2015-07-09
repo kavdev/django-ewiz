@@ -100,7 +100,7 @@ class EwizQuery(NonrelQuery):
             },
         }
 
-    def __debug(self):
+    def _debug(self):
         return ('DEBUG INFO:' +
                 '\n\nRAW_QUERY: ' + str(self.query) +
                 '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
@@ -255,21 +255,26 @@ class EwizCompiler(NonrelCompiler):
 
         """
 
-        aggregates = list(self.query.aggregate_select.values())
+        self.pre_sql_setup()
 
-        try:
-            saveCheck = self.query.extra["a"] == ('1', [])
-        except:
-            pass
+        aggregates = self.query.aggregate_select.values()
 
         # Simulate a count().
         if aggregates:
             assert len(aggregates) == 1
             aggregate = aggregates[0]
+
+            is_count = True
+
             try:
-                assert aggregate.function == 'COUNT'
+                if aggregate.function != 'COUNT':
+                    is_count = False
             except AttributeError:
-                assert aggregate.sql_function == 'COUNT'
+                if aggregate.sql_function != 'COUNT':
+                    is_count = False
+
+            if not is_count:
+                raise NotImplementedError("The database backend only supports count() queries.")
 
             opts = self.query.get_meta()
 
@@ -283,22 +288,6 @@ class EwizCompiler(NonrelCompiler):
                 return [count]
             elif result_type is MULTI:
                 return [[count]]
-        #
-        # The save() method determines whether to UPDATE or INSERT based on whether or not primary_key query results exist (if a primary_key is not supplied, INSERT is chosen)
-        # The following conditional section is a small hack that uses the count() method to count the number of results returned.
-        #
-        # False is returned if zero results are returned, True otherwise.
-        #
-        elif saveCheck:
-            self.query.extra = SortedDict()
-            count = self.get_count()
-            if result_type is SINGLE:
-                return (count != 0)
-            elif result_type is MULTI:
-                return (count != 0)
-
-        raise NotImplementedError("The database backend only supports "
-                                  "count() queries.")
 
 
 class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
@@ -317,6 +306,8 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
         if requested, returns the primary key of the new ticket.
 
         """
+
+        self.pre_sql_setup()
 
         docs = []
         pk = self.query.get_meta().pk
