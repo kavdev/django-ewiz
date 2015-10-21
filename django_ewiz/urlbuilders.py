@@ -20,8 +20,12 @@
 
 """
 
-import sys
+from functools import wraps
 import logging
+import sys
+
+from django.db.utils import DatabaseError
+
 
 # Python 2 compatibility
 try:
@@ -29,10 +33,6 @@ try:
 except ImportError:
     from urllib.parse import quote
 
-
-from functools import wraps
-
-from django.db.utils import DatabaseError
 
 logger = logging.getLogger("django_ewiz_urls")
 

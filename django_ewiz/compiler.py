@@ -23,16 +23,15 @@
 import logging
 import re
 
-from django.db.utils import DatabaseError, IntegrityError
 from django.db.models.sql.constants import SINGLE, MULTI
-from django.utils.datastructures import SortedDict
+from django.db.utils import DatabaseError, IntegrityError
 from django.utils.encoding import smart_str
-
-import requests
 from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
+import requests
 
 from .decompiler import EwizDecompiler
 from .urlbuilders import Select, Update, Insert
+
 
 MAX_LIMIT = '9223372036854775807'  # Max limit as proposed by MySQL / 2 (for some reason...)
 
@@ -101,9 +100,9 @@ class EwizQuery(NonrelQuery):
         }
 
     def _debug(self):
-        return ('DEBUG INFO:' +
-                '\n\nRAW_QUERY: ' + str(self.query) +
-                '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
+        return ('DEBUG INFO:' + 
+                '\n\nRAW_QUERY: ' + str(self.query) + 
+                '\nCOMPILED_QUERY: ' + str(self.compiled_query) + 
                 '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
                 )
 
