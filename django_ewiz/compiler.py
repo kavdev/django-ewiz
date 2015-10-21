@@ -26,6 +26,7 @@ import re
 from django.db.models.sql.constants import SINGLE, MULTI
 from django.db.utils import DatabaseError, IntegrityError
 from django.utils.encoding import smart_str
+
 from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
 import requests
 
@@ -260,6 +261,7 @@ class EwizCompiler(NonrelCompiler):
 
         # Simulate a count().
         if aggregates:
+            aggregates = list(aggregates)
             assert len(aggregates) == 1
             aggregate = aggregates[0]
 
@@ -278,7 +280,13 @@ class EwizCompiler(NonrelCompiler):
             opts = self.query.get_meta()
 
             try:
-                assert aggregate.input_field.value == '*' or aggregate.input_field == (opts.db_table, opts.pk.column)  # Fair warning: the latter part of this or statement hasn't been tested
+                try:
+                    from django.db.models.expressions import Star
+                    is_star = isinstance(aggregate.input_field, Star)  # Django 1.8.5+
+                except ImportError:
+                    is_star = aggregate.input_field.value == '*'
+
+                assert is_star or aggregate.input_field == (opts.db_table, opts.pk.column)  # Fair warning: the latter part of this or statement hasn't been tested
             except AttributeError:
                 assert aggregate.col == '*' or aggregate.col == (opts.db_table, opts.pk.column)
 

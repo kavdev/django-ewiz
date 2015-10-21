@@ -1,6 +1,15 @@
+# Eclipse Project Files
+.settings/
+*.project
+*.pydevproject
+*.prefs
+
+# Python bytecode:
+*.py[co]
+__pycache__
+
+# Packaging files:
 MANIFEST
 dist/*
 build/*
 django_ewiz.egg-info/*
-.project
-.pydevproject

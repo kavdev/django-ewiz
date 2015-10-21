@@ -125,7 +125,7 @@ class EwizDecompiler(object):
 
         # Return only the count before the heavy lifting if countOnly is True
         if count_only:
-            first_line = response.iter_lines(decode_unicode=True).next()
+            first_line = next(response.iter_lines(decode_unicode=True))
             count = pattern.match(smart_str(first_line)).group('value')
 
             return count, response_list
