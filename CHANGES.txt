@@ -34,3 +34,5 @@ v1.3.6, 10/07/14 -- Python 3 fixes, improved logging
 v1.3.7, 10/07/14 -- Forgot a bunch of logging stuff...
 v1.3.8, 10/13/14 -- bugfix
 v1.3.9, 12/11/14 -- Hotfix: Django 1.7 Expects a status return value from the Update compiler
+v1.4.0, 07/08/15 -- Django 1.8 Compatability
+v1.4.1, 07/09/15 -- Bugfix
