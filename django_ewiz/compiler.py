@@ -23,16 +23,16 @@
 import logging
 import re
 
-from django.db.utils import DatabaseError, IntegrityError
 from django.db.models.sql.constants import SINGLE, MULTI
-from django.utils.datastructures import SortedDict
+from django.db.utils import DatabaseError, IntegrityError
 from django.utils.encoding import smart_str
 
-import requests
 from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
+import requests
 
 from .decompiler import EwizDecompiler
 from .urlbuilders import Select, Update, Insert
+
 
 MAX_LIMIT = '9223372036854775807'  # Max limit as proposed by MySQL / 2 (for some reason...)
 
@@ -101,9 +101,9 @@ class EwizQuery(NonrelQuery):
         }
 
     def _debug(self):
-        return ('DEBUG INFO:' +
-                '\n\nRAW_QUERY: ' + str(self.query) +
-                '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
+        return ('DEBUG INFO:' + 
+                '\n\nRAW_QUERY: ' + str(self.query) + 
+                '\nCOMPILED_QUERY: ' + str(self.compiled_query) + 
                 '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
                 )
 
@@ -261,6 +261,7 @@ class EwizCompiler(NonrelCompiler):
 
         # Simulate a count().
         if aggregates:
+            aggregates = list(aggregates)
             assert len(aggregates) == 1
             aggregate = aggregates[0]
 
@@ -279,7 +280,13 @@ class EwizCompiler(NonrelCompiler):
             opts = self.query.get_meta()
 
             try:
-                assert aggregate.input_field.value == '*' or aggregate.input_field == (opts.db_table, opts.pk.column)  # Fair warning: the latter part of this or statement hasn't been tested
+                try:
+                    from django.db.models.expressions import Star
+                    is_star = isinstance(aggregate.input_field, Star)  # Django 1.8.5+
+                except ImportError:
+                    is_star = aggregate.input_field.value == '*'
+
+                assert is_star or aggregate.input_field == (opts.db_table, opts.pk.column)  # Fair warning: the latter part of this or statement hasn't been tested
             except AttributeError:
                 assert aggregate.col == '*' or aggregate.col == (opts.db_table, opts.pk.column)
 
