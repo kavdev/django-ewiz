@@ -35,6 +35,11 @@ try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
+try:
+    from concurrent.futures import ThreadPoolExecutor
+    threading = True
+except ImportError:
+    threading = False
 
 
 logging.getLogger("django_ewiz")
@@ -137,11 +142,18 @@ class EwizDecompiler(object):
                 id_list.append(pattern.match(smart_str(line)).group('value'))
 
             count = int(id_list[0])
-            idList = id_list[1:]
+            id_list = id_list[1:]
 
-            for ticket_id in idList:
+            def read_ticket(ticket_id):
                 response_url = Read(self.settings_dict, self.model._meta.db_table, ticket_id).build()
-                response_list.append(self.__request_single(response_url))
+                return self.__request_single(response_url)
+
+            num_connections = self.settings_dict.get('NUM_CONNECTIONS')
+            if threading and num_connections:
+                with ThreadPoolExecutor(num_connections) as pool:
+                    response_list = pool.map(read_ticket, id_list)
+            else:
+                response_list = map(read_ticket, id_list)
 
         return count, response_list
 
