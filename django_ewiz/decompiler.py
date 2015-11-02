@@ -23,18 +23,19 @@
 import logging
 import re
 
+from django.db.utils import DatabaseError
+from django.utils.encoding import smart_str
+import requests
+
+from .urlbuilders import Read
+
+
 # Python 2 compatibility
 try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
 
-from django.db.utils import DatabaseError
-from django.utils.encoding import smart_str
-
-import requests
-
-from .urlbuilders import Read
 
 logging.getLogger("django_ewiz")
 

@@ -25,6 +25,7 @@ import logging
 from djangotoolbox.db.base import (NonrelDatabaseFeatures, NonrelDatabaseOperations, NonrelDatabaseWrapper, NonrelDatabaseClient,
                                    NonrelDatabaseValidation, NonrelDatabaseIntrospection, NonrelDatabaseCreation)
 
+
 logging.getLogger("django_ewiz")
 
 
