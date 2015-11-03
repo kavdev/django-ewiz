@@ -44,6 +44,7 @@ In the ``DATABASES`` settings dictionary, simply use *django_ewiz* as the ENGINE
         'PASSWORD': '',  # The user's password
         'HOST': '',  # EnterpriseWizard's REST base url, generally 'www.example.com/ewws/'. Don't include the protocol string (e.g. 'http://').
         'PORT': '',  # Either 80 or 443 (HTTP or HTTPS requests only)
+        'NUM_CONNECTIONS':'', # Default: 1, Allows multiple concurrent connections to be used when retrieving multiple tickets in a query. 
     },
 
 That's it! All database operations performed will be abstracted and should function as the usual engines do (unless what you wish to do conflicts with the options below).
