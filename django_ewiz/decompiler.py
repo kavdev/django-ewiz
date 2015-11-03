@@ -136,13 +136,13 @@ class EwizDecompiler(object):
 
             return count, response_list
         else:
-            id_list = []
+            response_lines = []
 
             for line in response.iter_lines(decode_unicode=True):
-                id_list.append(pattern.match(smart_str(line)).group('value'))
+                response_lines.append(pattern.match(smart_str(line)).group('value'))
 
-            count = int(id_list[0])
-            id_list = id_list[1:]
+            count = int(response_lines[0])
+            id_list = response_lines[1:]
 
             def read_ticket(ticket_id):
                 response_url = Read(self.settings_dict, self.model._meta.db_table, ticket_id).build()
