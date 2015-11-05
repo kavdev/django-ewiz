@@ -26,7 +26,6 @@ import re
 from django.db.models.sql.constants import SINGLE, MULTI
 from django.db.utils import DatabaseError, IntegrityError
 from django.utils.encoding import smart_str
-
 from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
 import requests
 
@@ -101,9 +100,9 @@ class EwizQuery(NonrelQuery):
         }
 
     def _debug(self):
-        return ('DEBUG INFO:' + 
-                '\n\nRAW_QUERY: ' + str(self.query) + 
-                '\nCOMPILED_QUERY: ' + str(self.compiled_query) + 
+        return ('DEBUG INFO:' +
+                '\n\nRAW_QUERY: ' + str(self.query) +
+                '\nCOMPILED_QUERY: ' + str(self.compiled_query) +
                 '\nQUERY_URL: ' + str(Select(self.connection.settings_dict, self.query.model._meta.db_table, self.compiled_query).build())
                 )
 

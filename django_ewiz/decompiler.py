@@ -23,18 +23,24 @@
 import logging
 import re
 
+from django.db.utils import DatabaseError
+from django.utils.encoding import smart_str
+import requests
+
+from .urlbuilders import Read
+
+
 # Python 2 compatibility
 try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
+try:
+    from concurrent.futures import ThreadPoolExecutor
+    threading = True
+except ImportError:
+    threading = False
 
-from django.db.utils import DatabaseError
-from django.utils.encoding import smart_str
-
-import requests
-
-from .urlbuilders import Read
 
 logging.getLogger("django_ewiz")
 
@@ -130,17 +136,24 @@ class EwizDecompiler(object):
 
             return count, response_list
         else:
-            id_list = []
+            response_lines = []
 
             for line in response.iter_lines(decode_unicode=True):
-                id_list.append(pattern.match(smart_str(line)).group('value'))
+                response_lines.append(pattern.match(smart_str(line)).group('value'))
 
-            count = int(id_list[0])
-            idList = id_list[1:]
+            count = int(response_lines[0])
+            id_list = response_lines[1:]
 
-            for ticket_id in idList:
+            def read_ticket(ticket_id):
                 response_url = Read(self.settings_dict, self.model._meta.db_table, ticket_id).build()
-                response_list.append(self.__request_single(response_url))
+                return self.__request_single(response_url)
+
+            num_connections = self.settings_dict.get('NUM_CONNECTIONS')
+            if threading and num_connections:
+                with ThreadPoolExecutor(num_connections) as pool:
+                    response_list = pool.map(read_ticket, id_list)
+            else:
+                response_list = map(read_ticket, id_list)
 
         return count, response_list
 
