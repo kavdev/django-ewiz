@@ -25,6 +25,7 @@ import logging
 import sys
 
 from django.db.utils import DatabaseError
+from urllib.parse import quote_plus
 
 
 # Python 2 compatibility
@@ -162,7 +163,7 @@ class Insert(object):
 
     @safe_call
     def build(self):
-        url = quote(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
+        url = quote_plus(self.__build_insert() + self.__build_data() + '&time_spent=0:0:1:0', ":/?$&='")
         logger.debug(url)
 
         return url
@@ -176,9 +177,10 @@ class Insert(object):
         data_string = ''
         for field, value in self.data:
             # Only insert if the field is editable and the field has a value or is allowed to be blank
-            if (value or field.blank):  # field.editable and
-                data_string += '&' + field.column + '=' + field.help_text + str(value)
+            if ((value or field.blank) and field.editable):  # field.editable and
+                data_string += '&' + field.column + '=' + field.help_text + str(value).replace('&', '%26amp%3B')
 
+        print(data_string)
         return data_string
 
 
