@@ -25,5 +25,5 @@ from .attacher import EwizAttacher
 # Version Classification
 # Major Updates, Minor Updates, Revision/Bugfix Updates
 #
-VERSION = ("1", "5", "1")
+VERSION = ("1", "5", "2")
 __version__ = ".".join(VERSION)

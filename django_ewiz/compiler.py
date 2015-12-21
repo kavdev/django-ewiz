@@ -26,8 +26,9 @@ import re
 from django.db.models.sql.constants import SINGLE, MULTI
 from django.db.utils import DatabaseError, IntegrityError
 from django.utils.encoding import smart_str
-from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
 import requests
+
+from djangotoolbox.db.basecompiler import (NonrelQuery, NonrelCompiler, NonrelInsertCompiler, NonrelUpdateCompiler, NonrelDeleteCompiler)
 
 from .decompiler import EwizDecompiler
 from .urlbuilders import Select, Update, Insert
@@ -256,7 +257,10 @@ class EwizCompiler(NonrelCompiler):
 
         self.pre_sql_setup()
 
-        aggregates = self.query.aggregate_select.values()
+        try:
+            aggregates = self.query.annotation_select.values()
+        except AttributeError:
+            aggregates = self.query.aggregate_select.values()
 
         # Simulate a count().
         if aggregates:
@@ -281,7 +285,11 @@ class EwizCompiler(NonrelCompiler):
             try:
                 try:
                     from django.db.models.expressions import Star
-                    is_star = isinstance(aggregate.input_field, Star)  # Django 1.8.5+
+
+                    try:
+                        is_star = isinstance(aggregate.input_field, Star)  # Django 1.8.5+
+                    except AttributeError:
+                        is_star = isinstance(aggregate.get_source_expressions()[0], Star)  # Django 1.9
                 except ImportError:
                     is_star = aggregate.input_field.value == '*'
 
