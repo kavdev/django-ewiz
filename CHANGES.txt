@@ -38,3 +38,4 @@ v1.4.0, 2015-07-08 -- Django 1.8 Compatability
 v1.4.1, 2015-07-09 -- Bugfix
 v1.5.0, 2015-10-20 -- Deprecated Python 2.7, Django 1.8.5 support, moved to github
 v1.5.1, 2015-11-05 -- Added parallel ticket retrieval (Thanks @willson556)
+v1.5.2, 2015-12-21 -- Django 1.9 compatability
