@@ -176,8 +176,8 @@ class Insert(object):
         data_string = ''
         for field, value in self.data:
             # Only insert if the field is editable and the field has a value or is allowed to be blank
-            if (value or field.blank):  # field.editable and
-                data_string += '&' + field.column + '=' + field.help_text + str(value)
+            if ((value or field.blank) and field.editable):  # field.editable and
+                data_string += '&' + field.column + '=' + field.help_text + str(value).replace('&', '%26amp%3B')
 
         return data_string
 
