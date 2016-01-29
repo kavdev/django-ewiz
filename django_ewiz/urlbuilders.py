@@ -176,7 +176,7 @@ class Insert(object):
         data_string = ''
         for field, value in self.data:
             # Only insert if the field is editable and the field has a value or is allowed to be blank
-            if ((value or field.blank) and field.editable):  # field.editable and
+            if field.editable and (value or field.blank):
                 data_string += '&' + field.column + '=' + field.help_text + str(value).replace('&', '%26amp%3B')
 
         return data_string
@@ -224,7 +224,7 @@ class Update(object):
         for field, value in self.data:
             # Only update if the field is editable and the field has a value or is allowed to be blank
             if field.editable and (value or field.blank):
-                data_string += '&' + field.column + '=' + field.help_text + str(value)
+                data_string += '&' + field.column + '=' + field.help_text + str(value).replace('&', '%26amp%3B')
 
         return data_string
 
