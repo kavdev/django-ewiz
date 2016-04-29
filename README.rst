@@ -4,7 +4,7 @@ django-ewiz
 A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:Version:           1.5.3
+:Version:           1.5.4
 :Dependencies:      Python 3.4+, Django>=1.5, djangotoolbox>=1.6.2, requests>=2.2.0
 :Home page:         https://github.com/kavdev/django-ewiz
 :Author:            Alex Kavanaugh <kavanaugh.development@outlook.com>

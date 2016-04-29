@@ -40,3 +40,4 @@ v1.5.0, 2015-10-20 -- Deprecated Python 2.7, Django 1.8.5 support, moved to gith
 v1.5.1, 2015-11-05 -- Added parallel ticket retrieval (Thanks @willson556)
 v1.5.2, 2015-12-21 -- Django 1.9 compatability
 v1.5.3, 2016-29-01 -- Urlbulder ampersand bugfix
+v1.5.4, 2016-29-04 -- Raise exception on non 200 HTTP response

@@ -7,7 +7,7 @@ def read(fname):
 
 setup(
     name='django-ewiz',
-    version='1.5.3',
+    version='1.5.4',
     author='Alex Kavanaugh',
     author_email='kavanaugh.development@outlook.com',
     description="A non-relational Django database backend that utilizes EnterpriseWizard's REST interface.",
