@@ -360,6 +360,9 @@ class EwizInsertCompiler(NonrelInsertCompiler, EwizCompiler):
         try:
             response = requests.get(url)
 
+            if response.status_code != 200:
+                raise requests.exceptions.HTTPError(str(response.content))
+
             # Return the new ID
             if return_id:
                 pattern = re.compile(r"^EWREST_id='(?P<value>.*)';$", re.DOTALL)
